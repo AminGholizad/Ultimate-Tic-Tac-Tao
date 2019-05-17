@@ -3,7 +3,6 @@
 #include <vector>
 #include <array>
 #include <algorithm>
-#include <cmath>
 // time limiting
 #include <sys/time.h>
 inline double get_time_ms(){
@@ -284,7 +283,7 @@ public:
       [[fallthrough]];
       case 1:
           std::cin >> x >> y; std::cin.ignore();
-          if (x==-1){
+          if (x==-1 && y==-1 && me!=Xmark){
             me = Xmark;
             op = Omark;
             valid_moves.clear();
