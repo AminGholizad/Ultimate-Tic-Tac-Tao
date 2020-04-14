@@ -1,37 +1,25 @@
 #include "uttt.hpp"
 namespace UTTT
 {
-bool State::operator==(State const &s) const &
+bool State::operator==(const State &s) const &
 {
     if (player != s.player)
         return false;
     if (lastMove != s.lastMove)
         return false;
-    for (size_t i = 0; i < 9; i++)
-        for (size_t j = 0; j < 9; j++)
+    for (auto i = 0ull; i < 9; ++i)
+        for (auto j = 0ull; j < 9; ++j)
             if (board[i][j] != s.board[i][j])
                 return false;
-    for (size_t i = 0; i < 3; i++)
-        for (size_t j = 0; j < 3; j++)
+    for (auto i = 0ull; i < 3; ++i)
+        for (auto j = 0ull; j < 3; ++j)
             if (largeboard[i][j] != s.largeboard[i][j])
                 return false;
     return true;
 }
-bool State::operator!=(State const &s) const &
+bool State::operator!=(const State &s) const &
 {
-    if (player == s.player)
-        return false;
-    if (lastMove == s.lastMove)
-        return false;
-    for (size_t i = 0; i < 9; i++)
-        for (size_t j = 0; j < 9; j++)
-            if (board[i][j] == s.board[i][j])
-                return false;
-    for (size_t i = 0; i < 3; i++)
-        for (size_t j = 0; j < 3; j++)
-            if (largeboard[i][j] == s.largeboard[i][j])
-                return false;
-    return true;
+    return !((*this)==s);
 }
 void State::debugLargeboard() const &
 {
@@ -47,13 +35,13 @@ void State::debugLargeboard() const &
     }
     std::cerr << '\n';
 }
-void State::debugSubboard(int const &x, int const &y) const &
+void State::debugSubboard(const size_t &x, const size_t &y) const &
 {
     std::cerr << "-------\n";
-    for (auto row : {0, 1, 2})
+    for (auto row =0ull; row<3; ++row)
     {
         std::cerr << "|";
-        for (auto col : {0, 1, 2})
+        for (auto col=0ull; col<3; ++col)
         {
             std::cerr << board[row + x][col + y] << "|";
         }
@@ -64,12 +52,12 @@ void State::debugSubboard(int const &x, int const &y) const &
 void State::debugBoard() const &
 {
     std::cerr << "-----------------------\n";
-    for (auto i = 0; i < 9; i++)
+    for (auto i = 0ull; i < 9; ++i)
     {
         if (i % 3 == 0)
             std::cerr << "-----------------------\n";
         std::cerr << "|";
-        for (auto j = 0; j < 9; j++)
+        for (auto j = 0ull; j < 9; ++j)
         {
             if (j % 3 == 0)
                 std::cerr << "|";
@@ -90,17 +78,17 @@ std::pair<int, int> State::sub_win_count() const &
 {
     int MEsum = 0;
     int OPsum = 0;
-    for (auto i = 0; i < 3; i++)
+    for (auto i = 0ull; i < 3; ++i)
     {
-        for (auto j = 0; j < 3; j++)
+        for (auto j = 0ull; j < 3; ++j)
         {
             if (largeboard[i][j] == player)
             {
-                MEsum += 1;
+                ++MEsum;
             }
             else if (largeboard[i][j] == player.otherPlayer())
             {
-                OPsum += 1;
+                ++OPsum;
             }
         }
     }
@@ -125,7 +113,8 @@ void State::userMove()
                 valid_moves.clear();
                 return;
             }
-        } while (!is_valid(m));
+        }
+        while (!is_valid(m));
     }
     updateState(m);
     player = player.otherPlayer();
@@ -141,43 +130,42 @@ void State::set_valid_moves()
 }
 void State::init_valid_moves()
 {
-    for (auto i = 0; i < 9; i++)
-        for (auto j = 0; j < 9; j++)
+    for (auto i = 0; i < 9; ++i)
+        for (auto j = 0; j < 9; ++j)
             valid_moves.emplace_back(i, j);
 }
 void State::get_valid_moves()
 {
     valid_moves.clear();
-    int lx = lastMove.X() % 3;
-    int ly = lastMove.Y() % 3;
-    int sx = lx * 3;
-    int sy = ly * 3;
+    auto [lx, ly] = lastMove % 3;
+    size_t sx = lx * 3;
+    size_t sy = ly * 3;
     if (largeboard[lx][ly].isNone())
     {
-        for (auto i = 0; i < 3; i++)
-            for (auto j = 0; j < 3; j++)
+        for (auto i = 0ull; i < 3; ++i)
+            for (auto j = 0ull; j < 3; ++j)
                 if (board[i + sx][j + sy].isNone())
                     valid_moves.emplace_back(i + sx, j + sy);
     }
     else
     {
-        for (auto i = 0; i < 9; i++)
-            for (auto j = 0; j < 9; j++)
+        for (auto i = 0ull; i < 9; ++i)
+            for (auto j = 0ull; j < 9; ++j)
                 if (board[i][j].isNone())
                     valid_moves.emplace_back(i, j);
     }
 }
 bool State::is_largeboard_full() const &
 {
-    for (auto i = 0; i < 3; i++)
-        for (auto j = 0; j < 3; j++)
+    for (auto i = 0ull; i < 3; ++i)
+        for (auto j = 0ull; j < 3; ++j)
             if (largeboard[i][j].isNone())
                 return false;
     return true;
 }
-State::Player State::compute_winner(Player const &p) const &
+State::Player State::compute_winner(const Player &p) const &
 {
-    for (auto i = 0; i < 3; i++)
+    for (auto i = 0ull; i < 3; ++i)
     {
         if (largeboard[i][0] == p && largeboard[i][1] == p && largeboard[i][2] == p)
             return p;
@@ -193,11 +181,11 @@ State::Player State::compute_winner(Player const &p) const &
         auto [MEsum, OPsum] = sub_win_count();
         return (MEsum > OPsum) ? player : player.otherPlayer();
     }
-    return Player::None;
+    return Player::Mark::None;
 } // namespace UTTT
-bool State::is_sub_winner(int const &x, int const &y, Player const &p) const &
+bool State::is_sub_winner(const size_t &x, const size_t &y, const Player &p) const &
 {
-    for (auto i = 0; i < 3; i++)
+    for (auto i = 0ull; i < 3; ++i)
     {
         if (board[i + x][y] == p && board[i + x][1 + y] == p && board[i + x][2 + y] == p)
             return true;
@@ -210,28 +198,27 @@ bool State::is_sub_winner(int const &x, int const &y, Player const &p) const &
         return true;
     return false;
 }
-bool State::is_sub_full(int const &x, int const &y) const &
+bool State::is_sub_full(const size_t &x, const size_t &y) const &
 {
-    for (auto i = x; i < x + 3; i++)
-        for (auto j = y; j < y + 3; j++)
+    for (auto i = x; i < x + 3; ++i)
+        for (auto j = y; j < y + 3; ++j)
             if (board[i][j].isNone())
                 return false;
     return true;
 }
-void State::fill_sub(int const &x, int const &y, Player const &p)
+void State::fill_sub(const size_t &x, const size_t &y, const Player &p)
 {
-    for (auto i = x; i < x + 3; i++)
-        for (auto j = y; j < y + 3; j++)
+    for (auto i = x; i < x + 3; ++i)
+        for (auto j = y; j < y + 3; ++j)
             board[i][j] = p;
 }
-void State::updateState(Move const &m)
+void State::updateState(const Move &m)
 {
     board[m.X()][m.Y()] = player;
     lastMove = m;
-    int lx = m.X() / 3;
-    int ly = m.Y() / 3;
-    int sx = lx * 3;
-    int sy = ly * 3;
+    auto [lx,ly] = m / 3;
+    auto sx = lx * 3;
+    auto sy = ly * 3;
     if (is_sub_winner(sx, sy, player))
     {
         largeboard[lx][ly] = player;
@@ -240,19 +227,19 @@ void State::updateState(Move const &m)
     }
     else if (is_sub_full(sx, sy))
     {
-        largeboard[lx][ly] = Player::Draw;
-        fill_sub(sx, sy, Player::Draw);
+        largeboard[lx][ly] = Player::Mark::Draw;
+        fill_sub(sx, sy, Player::Mark::Draw);
         winner = compute_winner(player);
     }
 }
-void State::moveTo(Move const &m)
+void State::moveTo(const Move &m)
 {
     updateState(m);
     std::cerr << player << " Moved to ";
     std::cout << lastMove << '\n';
     player = player.otherPlayer();
 }
-State State::sim_move(Move const &m) const &
+State State::sim_move(const Move &m) const &
 {
     auto cp = *this;
     cp.updateState(m);

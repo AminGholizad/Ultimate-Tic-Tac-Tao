@@ -1,7 +1,7 @@
-#ifndef GMAE_HPP
-#define GMAE_HPP
+#ifndef GAME_HPP
+#define GAME_HPP
 #pragma once
 #include "player.hpp"
 #include "move.hpp"
 
-#endif // !GMAE_HPP
+#endif // !GAME_HPP

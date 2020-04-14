@@ -2,20 +2,22 @@
 #define PLAYER_HPP
 #pragma once
 #include <iostream>
-#include <map>
+#include <array>
 namespace Game
 {
 class Player
 {
 public:
-    enum Mark : int
+    enum class Mark : int
     {
-        Draw = -1,
-        None = 0,
-        X = 1,
-        O = 2
+        None,
+        Draw,
+        X,
+        O,
+
+        Size
     };
-    static const std::map<Player, char> symbols;
+    static constexpr std::array<char,static_cast<size_t>(Mark::Size)> symbols{'-', '#', 'X', 'O'};
     inline Player() = default;
     inline Player(Player const &) = default;
     inline Player(Player &&) = default;
@@ -26,11 +28,10 @@ public:
     constexpr bool operator!=(const Player &p) const & { return mark != p.mark; }
     constexpr bool operator<(const Player &p) const & { return mark < p.mark; }
     friend std::ostream &operator<<(std::ostream &os, const Player &p);
-    constexpr bool isNone() const & { return mark == None; }
-    constexpr bool isDraw() const & { return mark == Draw; }
+    constexpr bool isNone() const & { return mark == Mark::None; }
+    constexpr bool isDraw() const & { return mark == Mark::Draw; }
     inline Mark operator()() const & { return mark; };
-    constexpr Player otherPlayer() const & { return (mark == X) ? O : X; };
-
+    constexpr Player otherPlayer() const & { return (mark == Mark::X) ? Mark::O : Mark::X; };
 private:
     Mark mark;
 };

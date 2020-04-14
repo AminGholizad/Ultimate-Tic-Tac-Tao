@@ -16,7 +16,7 @@ class Node : public std::enable_shared_from_this<Node<State>>
 public:
     using Node_Sptr = std::shared_ptr<Node>;
     using Node_Wptr = std::weak_ptr<Node>;
-    using Player = State::Player;
+    using Player = typename State::Player;
     Node() = default;
     ~Node() = default;
     constexpr Node(State const &s) : state(s) {}
@@ -45,13 +45,12 @@ public:
     constexpr bool isOver() const & { return state.isOver(); }
     constexpr Player getWinner() const & { return state.getWinner(); }
     Node_Sptr userMove();
-
 private:
     Node_Wptr parent{};
     State state{};
     std::vector<Node_Sptr> children{};
     unsigned int visits{0};
-    std::map<Player, double> wins{{Player::X, 0.}, {Player::O, 0.}};
+    std::map<Player, double> wins{{Player::Mark::X, 0.}, {Player::Mark::O, 0.}};
 };
 } // namespace MCTS
 #endif // !MCTS_HPP

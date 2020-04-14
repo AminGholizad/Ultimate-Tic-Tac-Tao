@@ -1,34 +1,70 @@
-SHELL := bash
-.ONESHELL:
-.SHELLFLAGS := -eu -o pipefail -c
-.DELETE_ON_ERROR:
-MAKEFLAGS += --warn-undefined-variables
-MAKEFLAGS += --no-builtin-rules
+# compilers and flags
+CC            := g++
+CPP_FLAGS     := -Wall -pedantic-errors -Wextra -Werror -Wsign-conversion -Weffc++ -std=c++17 -g -O0
 
-ifeq ($(origin .RECIPEPREFIX), undefined)
-  $(error This Make does not support .RECIPEPREFIX. Please use GNU Make 4.0 or later)
+LD        := g++
+LD_FLAGS  := 
+
+# folder structure
+BIN       := bin
+SRC       := src
+INCLUDE   := include
+BUILD     := build
+
+# update flags
+CPP_FLAGS := $(CPP_FLAGS) -I$(INCLUDE)
+# program outputs
+LIBRARIES   :=
+EXECUTABLE  := main
+
+# C sources and dependences
+CPP_SOURCES := $(wildcard $(SRC)/*.cpp) 
+CPP_DEPENDS := $(patsubst $(SRC)/%.cpp, $(BUILD)/%.cpp.d, $(CPP_SOURCES))
+CPP_OBJECTS := $(patsubst $(SRC)/%.cpp, $(BUILD)/%.cpp.o, $(CPP_SOURCES))
+
+# platform-specific commands and settings
+ifeq ($(OS),Windows_NT)
+	RM_CALL     = del /Q /F $(subst /,\,$(1)) 2>NUL
+	MKDIR_CALL  = if not exist "$(subst /,\,$(1))" mkdir "$(subst /,\,$(1))"
+	FIND_CALL   = dir /b/s "$(subst /,\,$(1))"
+	PATH_CALL   = $(subst /,\,$(1))
+	EXECUTABLE  := $(EXECUTABLE).exe
+else
+	RM_CALL     = rm -rf $(1)
+	MKDIR_CALL  = mkdir -p $(1)
+	FIND_CALL   = find -L . -name $(1)
+	PATH_CALL   = $(1)
 endif
-.RECIPEPREFIX = >
-# C++ compiler 
-CXX = g++
-# Compiler and linker flags (warning levels, optimisation level, 
-# include debugging symbols, add include search path, add library search path)
-CXXFLAGS = -Wall -Wextra -std=c++2a -O3 -I./src/inc
-# Object files
-OBJS := $(subst .cpp,.o,$(subst src/,obj/,$(shell ls src/*.cpp)))
-# Executable name
-TARGET = main.exe
 
-$(TARGET): $(OBJS)
-> $(CXX) -o $@ $(OBJS)
+# targets
+TARGET := $(BIN)/$(EXECUTABLE)
 
-obj/%.o: src/%.cpp src/inc/%.hpp
-> $(CXX) -o $@ -c $< $(CXXFLAGS)
+all:  $(TARGET)
 
+run: all
+	$(call PATH_CALL,$(TARGET))
 
-obj/%.o: src/%.cpp
-> $(CXX) -o $@ -c $< $(CXXFLAGS)
-
-.PHONY: clean
 clean:
-> rm -rf obj/*.o $(TARGET)
+	$(call RM_CALL,$(TARGET) $(CPP_DEPENDS) $(CPP_OBJECTS) )
+
+# include dependency rules
+-include $(CPP_DEPENDS)
+
+# build and bin directories
+$(BUILD):
+	$(call MKDIR_CALL,$@)
+
+$(BIN):
+	$(call MKDIR_CALL,$@)
+
+# dependencies
+$(BUILD)/%.cpp.d: $(SRC)/%.cpp | $(BUILD)
+	$(CC) $(CPP_FLAGS) -MM -MT $(@:.d=.o) $< >> $@
+
+# objects
+$(BUILD)/%.cpp.o: $(SRC)/%.cpp | $(BUILD)
+	$(CC) $(CPP_FLAGS) -o $@ -c $<
+
+# binary
+$(BIN)/$(EXECUTABLE): $(CPP_OBJECTS) | $(BIN)
+	$(LD) $(LD_FLAGS) $(CPP_OBJECTS) -o $@ $(LIBRARIES)

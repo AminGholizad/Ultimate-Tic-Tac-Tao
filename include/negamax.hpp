@@ -10,16 +10,16 @@
 namespace NEGAMAX
 {
 template <class State>
-class negamax
+class Negamax
 {
 public:
-    static const int INF;
-    using Player = State::Player;
-    using Move = State::Move;
-    negamax() = default;
-    inline negamax(State s, int d) : state(s), duration(d) {}
-    inline negamax(State s) : state(s) {}
-    ~negamax() = default;
+    static constexpr int INF{2147483646};
+    using Player = typename State::Player;
+    using Move = typename State::Move;
+    Negamax() = default;
+    inline Negamax(State s, int d) : state(s), duration(d) {}
+    inline Negamax(State s) : state(s) {}
+    ~Negamax() = default;
 
     inline void debugBoard() const & { state.debugBoard(); }
     inline void debugLargeboard() const & { state.debugLargeboard(); }
@@ -27,9 +27,9 @@ public:
     inline State getState() const & { return state; }
     constexpr bool isOver() const & { return state.isOver(); }
     constexpr Player getWinner() const & { return state.getWinner(); }
-    negamax choose_move(int t = 1000);
+    Negamax choose_move(int t = 1000);
     std::pair<int, Move> simulate(timer::time start, int depth, int alpha = -INF, int beta = INF, int color = 1) const &;
-    negamax userMove();
+    Negamax userMove();
 
 private:
     State state{};

@@ -2,10 +2,7 @@
 namespace NEGAMAX
 {
 template <class State>
-const int negamax<State>::INF = 2147483646;
-
-template <class State>
-negamax<State> negamax<State>::choose_move(int t)
+Negamax<State> Negamax<State>::choose_move(int t)
 {
     duration = t;
     state.set_valid_moves();
@@ -25,7 +22,7 @@ negamax<State> negamax<State>::choose_move(int t)
     return *this;
 }
 template <class State>
-std::pair<int, typename negamax<State>::Move> negamax<State>::simulate(timer::time start, int depth, int alpha, int beta, int color) const &
+std::pair<int, typename Negamax<State>::Move> Negamax<State>::simulate(timer::time start, int depth, int alpha, int beta, int color) const &
 {
     auto [l, m, o] = state.game_over();
     if (m || o)
@@ -39,7 +36,7 @@ std::pair<int, typename negamax<State>::Move> negamax<State>::simulate(timer::ti
     auto best_move = state.get_moves()[0];
     for (auto mov : state.get_moves())
     {
-        auto tmp = negamax(state.sim_move(mov), duration);
+        auto tmp = Negamax(state.sim_move(mov), duration);
         auto [val, move] = tmp.simulate(start, depth - 1, -beta, -alpha, -color);
         if (-val > maxEval)
         {
@@ -53,13 +50,13 @@ std::pair<int, typename negamax<State>::Move> negamax<State>::simulate(timer::ti
     return std::make_pair(maxEval, best_move);
 }
 template <class State>
-negamax<State> negamax<State>::userMove()
+Negamax<State> Negamax<State>::userMove()
 {
     auto s = state;
     s.set_valid_moves();
     s.userMove();
-    return negamax(s, duration);
+    return Negamax(s, duration);
 }
 } // namespace NEGAMAX
 #include "uttt.hpp"
-template class NEGAMAX::negamax<UTTT::State>;
+template class NEGAMAX::Negamax<UTTT::State>;

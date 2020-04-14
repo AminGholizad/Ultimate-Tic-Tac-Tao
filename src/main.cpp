@@ -10,7 +10,7 @@ void userVSmcts(int t = 1000);
 
 void userVSngm(int t = 1000);
 void ngmVSngm(int t1 = 1000, int t2 = 100);
-void mctsVSngm(int t1 = 1000, int t2 = 1000);
+void mctsVSngm(int t1 = 100, int t2 = 2000);
 
 int main(int argc, const char **argv)
 {
@@ -78,7 +78,7 @@ void userVSmcts(int t)
 
 void userVSngm(int t)
 {
-    auto tmp = NEGAMAX::negamax<UTTT::State>();
+    auto tmp = NEGAMAX::Negamax<UTTT::State>();
     tmp.debugBoard();
     std::cerr << "Enter your move (-1 -1 to start as second player):\n";
     while (!tmp.isOver())
@@ -98,7 +98,7 @@ void userVSngm(int t)
 }
 void ngmVSngm(int t1, int t2)
 {
-    auto tmp = NEGAMAX::negamax<UTTT::State>();
+    auto tmp = NEGAMAX::Negamax<UTTT::State>();
     tmp.debugBoard();
     int t = t1;
     while (!tmp.isOver())
@@ -117,13 +117,13 @@ void mctsVSngm(int t1, int t2)
 {
     auto state = UTTT::State{};
     auto mcts_bot = MCTS::Node(state).Ptr();
-    auto ngm_bot = NEGAMAX::negamax(state);
+    auto ngm_bot = NEGAMAX::Negamax(state);
     state.debugBoard();
     while (!state.isOver())
     {
         cerr << "mcts: \n";
         state = mcts_bot->choose_move(t1)->getState();
-        ngm_bot = NEGAMAX::negamax(state);
+        ngm_bot = NEGAMAX::Negamax(state);
         //state.debugBoard();
         if (state.isOver())
             break;

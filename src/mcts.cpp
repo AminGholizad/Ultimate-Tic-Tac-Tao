@@ -2,14 +2,14 @@
 namespace MCTS
 {
 template <class State>
-Node<State>::Node_Sptr Node<State>::getChild() const &
+typename Node<State>::Node_Sptr Node<State>::getChild() const &
 {
     return (std::all_of(children.begin(), children.end(), [](auto child) { return child->visits > 0; }))
                ? ucb1()
                : getRandomChild();
 }
 template <class State>
-Node<State>::Node_Sptr Node<State>::ucb1() const &
+typename Node<State>::Node_Sptr Node<State>::ucb1() const &
 {
     const auto lnTotal = log(visits);
     const auto p = state.getPlayer();
@@ -17,7 +17,7 @@ Node<State>::Node_Sptr Node<State>::ucb1() const &
                              [p, lnTotal](auto a, auto b) { return a->ucb1Score(p, lnTotal) < b->ucb1Score(p, lnTotal); });
 }
 template <class State>
-Node<State>::Node_Sptr Node<State>::bestChild() const &
+typename Node<State>::Node_Sptr Node<State>::bestChild() const &
 {
     const auto p = state.getPlayer();
     return *std::max_element(children.begin(), children.end(),
@@ -42,7 +42,7 @@ void Node<State>::allChildernStatus() const &
     bestChild()->status();
 }
 template <class State>
-Node<State>::Node_Sptr Node<State>::choose_move(int const &duration)
+typename Node<State>::Node_Sptr Node<State>::choose_move(int const &duration)
 {
     auto tmp = getThis();
     if (state.get_moves().empty())
@@ -84,7 +84,7 @@ void Node<State>::simulate()
         }
 }
 template <class State>
-Node<State>::Node_Sptr Node<State>::userMove()
+typename Node<State>::Node_Sptr Node<State>::userMove()
 {
     auto s = state;
     s.set_valid_moves();

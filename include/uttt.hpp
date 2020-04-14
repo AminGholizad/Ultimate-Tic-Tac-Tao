@@ -1,18 +1,21 @@
-#ifndef TTT_HPP
-#define TTT_HPP
+#ifndef UTTT_HPP
+#define UTTT_HPP
 #pragma once
 #include <array>
 #include <vector>
+#include <utility>
+#include <algorithm>
 #include <iostream>
 #include "game.hpp"
 
-namespace TTT
+namespace UTTT
 {
 class State
 {
 public:
     using Player = Game::Player;
     using Move = Game::Move;
+    using Board9x9 = std::array<std::array<Player, 9>, 9>;
     using Board3x3 = std::array<std::array<Player, 3>, 3>;
     inline State() = default;
     inline ~State() = default;
@@ -20,11 +23,13 @@ public:
     inline State(State &&) = default;
     inline State &operator=(State const &) = default;
     inline State &operator=(State &&) = default;
-    inline State(Board3x3 b, Move m, Player p) : board(b), lastMove(m), player(p) {}
+    inline State(Board9x9 b, Board3x3 lb) : board(b), largeboard(lb) {}
 
     bool operator==(State const &s) const &;
     bool operator!=(State const &s) const &;
 
+    void debugLargeboard() const &;
+    void debugSubboard(size_t const &x, size_t const &y) const &;
     void debugBoard() const &;
     void debugValidMoves() const &;
 
@@ -40,24 +45,34 @@ public:
         auto it = std::find(valid_moves.begin(), valid_moves.end(), move);
         std::rotate(valid_moves.begin(), it, it + 1);
     }
+    std::pair<int, int> sub_win_count() const &;
 
     void userMove();
     void set_valid_moves();
+    void init_valid_moves();
+    void get_valid_moves();
     State sim_move(Move const &m) const &;
     void moveTo(Move const &m);
-    constexpr auto game_over() const & { return std::make_tuple(winner.isDraw(), winner == player, winner == player.otherPlayer()); }
+    inline auto game_over() const & { return std::make_tuple(valid_moves.empty(), winner == player, winner == player.otherPlayer()); }
 
 private:
-    Board3x3 board{Player::None};
+    Board9x9 board{Player::Mark::None};
+    Board3x3 largeboard{Player::Mark::None};
     Move lastMove{-1, -1};
-    Player player{Player::X};
-    Player winner{Player::None};
+    Player player{Player::Mark::X};
+    Player winner{Player::Mark::None};
     std::vector<Move> valid_moves{};
 
     Player compute_winner(Player const &p) const &;
-    bool is_board_full() const &;
-    bool is_valid(Move const &m) const & { return std::find(valid_moves.begin(), valid_moves.end(), m) != valid_moves.end(); }
+    bool is_largeboard_full() const &;
+    bool is_sub_winner(const size_t &x, const size_t &y, Player const &p) const &;
+    bool is_sub_full(const size_t &x, const size_t &y) const &;
+    void fill_sub(const size_t &x, const size_t &y, Player const &p);
+
     void updateState(Move const &m);
+
+    inline bool is_valid(Move const &m) const & { return std::find(valid_moves.begin(), valid_moves.end(), m) != valid_moves.end(); }
 };
-} // namespace TTT
-#endif // !TTT_HPP
+} // namespace UTTT
+
+#endif // !UTTT_HPP
