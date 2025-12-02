@@ -1,53 +1,42 @@
+# CMake
+/build/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+_deps/
 
-# Created by https://www.toptal.com/developers/gitignore/api/c++,vscode
-# Edit at https://www.toptal.com/developers/gitignore?templates=c++,vscode
-
-### C++ ###
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
+# Visual Studio
+.vs/
+*.VC.db
+*.VC.opendb
+*.sdf
+*.suo
+*.user
 *.ilk
-
-# Debugger Files
+*.obj
 *.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
 *.lib
-
-# Executables
+*.dll
 *.exe
-*.out
-*.app
+*.exp
+*.aps
+*.bsc
+*.ncb
+*.opensdf
+*.res
+*.tlog
 
-### vscode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
+# macOS
+.DS_Store
 
-# End of https://www.toptal.com/developers/gitignore/api/c++,vscode
+# Linux
+*.o
+*.so
+*.a
+
+# Misc
+*~
+*.bak
+*.swp
+.vscode/
