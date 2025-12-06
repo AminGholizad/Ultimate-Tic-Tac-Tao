@@ -1,61 +1,59 @@
 #include "negamax.hpp"
-namespace NEGAMAX
-{
+#include <vector>
+namespace NEGAMAX {
 template <class State>
-Negamax<State> Negamax<State>::choose_move(int t)
-{
-    duration = t;
-    state.set_valid_moves();
-    auto best_move = state.get_moves()[0];
-    auto start = timer::now();
-    int depth = 1;
-    while (timer::isTimeRemaining(start, duration))
-    {
-        auto [val, move] = simulate(start, depth);
-        if (!timer::isTimeRemaining(start, duration))
-            break;
-        state.bring_to_first(move);
-        best_move = move;
-        depth++;
+Negamax<State> Negamax<State>::choose_move(int duration_) {
+  duration = duration_;
+  state.set_valid_moves();
+  auto best_move = state.get_moves()[0];
+  auto start = timer::now();
+  int depth = 1;
+  while (timer::isTimeRemaining(start, duration)) {
+    auto [val, move] = simulate(start, depth);
+    if (!timer::isTimeRemaining(start, duration)) {
+      break;
     }
-    state.moveTo(best_move);
-    return *this;
+    state.bring_to_first(move);
+    best_move = move;
+    depth++;
+  }
+  state.moveTo(best_move);
+  return *this;
 }
 template <class State>
-std::pair<int, typename Negamax<State>::Move> Negamax<State>::simulate(timer::time start, int depth, int alpha, int beta, int color) const &
-{
-    auto [l, m, o] = state.game_over();
-    if (m || o)
-        return std::make_pair(color * (m - o) * 100 * (depth + 1), Move());
-    if (depth == 0 || l || !timer::isTimeRemaining(start, duration))
-    {
-        auto [MEsum, OPsum] = state.sub_win_count();
-        return std::make_pair(color * (MEsum - 2 * OPsum) * (depth + 1), Move());
+std::pair<int, typename Negamax<State>::Move>
+Negamax<State>::simulate(timer::time start, int depth, int alpha, int beta,
+                         int color) const & {
+  auto [no_moves_left, did_I_win, did_opponent_win] = state.game_over();
+  if (did_I_win || did_opponent_win) {
+    return std::make_pair(
+        color * (did_I_win - did_opponent_win) * 100 * (depth + 1), Move());
+  }
+  if (depth == 0 || no_moves_left || !timer::isTimeRemaining(start, duration)) {
+    auto [MEsum, OPsum] = state.sub_win_count();
+    return std::make_pair(color * (MEsum - 2 * OPsum) * (depth + 1), Move());
+  }
+  int maxEval = -INF;
+  auto best_move = state.get_moves()[0];
+  for (auto mov : state.get_moves()) {
+    auto tmp = Negamax(state.sim_move(mov), duration);
+    auto [val, move] = tmp.simulate(start, depth - 1, -beta, -alpha, -color);
+    if (-val > maxEval) {
+      maxEval = -val;
+      best_move = mov;
     }
-    int maxEval = -INF;
-    auto best_move = state.get_moves()[0];
-    for (auto mov : state.get_moves())
-    {
-        auto tmp = Negamax(state.sim_move(mov), duration);
-        auto [val, move] = tmp.simulate(start, depth - 1, -beta, -alpha, -color);
-        if (-val > maxEval)
-        {
-            maxEval = -val;
-            best_move = mov;
-        }
-        alpha = (alpha < maxEval) ? maxEval : alpha;
-        if (beta <= alpha)
-            break;
+    alpha = (alpha < maxEval) ? maxEval : alpha;
+    if (beta <= alpha) {
+      break;
     }
-    return std::make_pair(maxEval, best_move);
+  }
+  return std::make_pair(maxEval, best_move);
 }
-template <class State>
-Negamax<State> Negamax<State>::userMove()
-{
-    auto s = state;
-    s.set_valid_moves();
-    s.userMove();
-    return Negamax(s, duration);
+template <class State> Negamax<State> Negamax<State>::userMove() {
+  auto state_copy = state;
+  state_copy.set_valid_moves();
+  state_copy.userMove();
+  return Negamax(state_copy, duration);
 }
 } // namespace NEGAMAX
 #include "uttt.hpp"
