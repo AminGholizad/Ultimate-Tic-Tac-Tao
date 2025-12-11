@@ -1,36 +1,34 @@
 #ifndef NEGAMAX_HPP
 #define NEGAMAX_HPP
 #pragma once
-#include "timer.hpp"
+#include <Timer.hpp>
 #include <limits>
+#include <utility>
 
 namespace NEGAMAX {
 template <class State> class Negamax {
-public:
-  static constexpr auto INF{std::numeric_limits<int>::max()};
-  using Player = typename State::Player;
-  using Move = typename State::Move;
-  constexpr Negamax() = default;
-  constexpr Negamax(State state_, int duration_)
-      : state(std::move(state_)), duration(duration_) {}
-  constexpr explicit Negamax(State state_) : state(std::move(state_)) {}
+    static constexpr auto INF{std::numeric_limits<int>::max()};
 
-  constexpr void debugBoard() const & { state.debugBoard(); }
-  constexpr void debugLargeboard() const & { state.debugLargeboard(); }
+  public:
+    using Player = typename State::Player;
+    using Move = typename State::Move;
+    constexpr Negamax() = default;
+    constexpr explicit Negamax(State state_) : state(std::move(state_)) {}
 
-  [[nodiscard]] constexpr State getState() const & { return state; }
-  [[nodiscard]] constexpr bool isOver() const & { return state.isOver(); }
-  [[nodiscard]] constexpr Player getWinner() const & {
-    return state.getWinner();
-  }
-  Negamax choose_move(int duration_ = 1000);
-  std::pair<int, Move> simulate(timer::time start, int depth, int alpha = -INF,
-                                int beta = INF, int color = 1) const &;
-  Negamax userMove();
+    constexpr void debugBoard() const & { state.debugBoard(); }
+    constexpr void debugLargeboard() const & { state.debugLargeboard(); }
 
-private:
-  State state{};
-  int duration{};
+    [[nodiscard]] constexpr State getState() const & { return state; }
+    [[nodiscard]] constexpr bool isOver() const & { return state.isOver(); }
+    [[nodiscard]] constexpr Player getWinner() const & { return state.getWinner(); }
+    Negamax choose_move(const Timer::milliseconds_t &duration = Timer::milliseconds_t{1000});
+    std::pair<int, Move> simulate(const Timer::Timer &timer, const Timer::milliseconds_t &duration,
+                                  int depth, int alpha = -INF, int beta = INF,
+                                  int color = 1) const &;
+    Negamax userMove();
+
+  private:
+    State state{};
 };
 } // namespace NEGAMAX
 #endif // NEGAMAX_HPP

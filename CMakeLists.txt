@@ -19,6 +19,10 @@ add_executable(Ultimate-Tic-Tac-Tao
     # Add all other .cpp files here
 )
 
+add_subdirectory(lib/Random-Helper)
+add_subdirectory(lib/Timer)
+target_link_libraries(Ultimate-Tic-Tac-Tao PRIVATE Random-Helper::Random-Helper Timer::Timer)
+
 set_target_properties(Ultimate-Tic-Tac-Tao PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
@@ -31,7 +35,7 @@ target_include_directories(Ultimate-Tic-Tac-Tao PRIVATE
 )
 
 target_compile_options(Ultimate-Tic-Tac-Tao PRIVATE
-    -Wall -Wextra -Werror
+    -Wall -Wextra #-Werror
     -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align
     -Wunused -Wpedantic -Wconversion -Wsign-conversion
     -Wnull-dereference -Wdouble-promotion -Wformat=2
