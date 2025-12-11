@@ -16,7 +16,8 @@ class State {
     static constexpr size_t THREE = 3ULL;
     using Board3x3 = std::array<std::array<Player, THREE>, THREE>; // TODO: convert to linear
     constexpr State() = default;
-    constexpr State(Board3x3 board_, Move move_, Player player_)
+    constexpr explicit State(Board3x3 board_, Move move_ = {-1, -1},
+                             Player player_ = Player{Player::Mark::X})
         : board(board_), lastMove(move_), player(player_) {}
 
     [[nodiscard]] friend constexpr bool operator==(const State &lhs, const State &rhs) {

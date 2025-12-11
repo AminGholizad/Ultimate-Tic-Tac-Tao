@@ -57,8 +57,10 @@ if (Ultimate-Tic-Tac-Tao_BUILD_TESTS)
     enable_testing()
     add_executable(Ultimate-Tic-Tac-TaoTests
         tests/test_main.cpp
+        src/ttt.cpp
         # Add all other .cpp files here
     )
+    target_link_libraries(Ultimate-Tic-Tac-TaoTests PRIVATE Random-Helper::Random-Helper Timer::Timer)
     target_include_directories(Ultimate-Tic-Tac-TaoTests PRIVATE ${PROJECT_SOURCE_DIR}/include)
     add_test(NAME Ultimate-Tic-Tac-TaoTests COMMAND Ultimate-Tic-Tac-TaoTests)
 endif()
