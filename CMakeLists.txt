@@ -35,7 +35,7 @@ target_include_directories(Ultimate-Tic-Tac-Tao PRIVATE
 )
 
 target_compile_options(Ultimate-Tic-Tac-Tao PRIVATE
-    -Wall -Wextra #-Werror
+    -Wall -Wextra -Werror
     -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align
     -Wunused -Wpedantic -Wconversion -Wsign-conversion
     -Wnull-dereference -Wdouble-promotion -Wformat=2
