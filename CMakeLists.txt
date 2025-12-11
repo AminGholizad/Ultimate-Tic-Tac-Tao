@@ -16,6 +16,7 @@ add_executable(Ultimate-Tic-Tac-Tao
     src/negamax.cpp
     src/ttt.cpp
     src/uttt.cpp
+    # Add all other .cpp files here
 )
 
 set_target_properties(Ultimate-Tic-Tac-Tao PROPERTIES
@@ -52,6 +53,7 @@ if (Ultimate-Tic-Tac-Tao_BUILD_TESTS)
     enable_testing()
     add_executable(Ultimate-Tic-Tac-TaoTests
         tests/test_main.cpp
+        # Add all other .cpp files here
     )
     target_include_directories(Ultimate-Tic-Tac-TaoTests PRIVATE ${PROJECT_SOURCE_DIR}/include)
     add_test(NAME Ultimate-Tic-Tac-TaoTests COMMAND Ultimate-Tic-Tac-TaoTests)
