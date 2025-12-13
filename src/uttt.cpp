@@ -57,21 +57,21 @@ void State::userMove() {
       std::cin >> move;
       std::cin.ignore();
       if (move == Move({-1, -1})) {
-        player = player.otherPlayer();
+        player = player.other_player();
         valid_moves.clear();
         return;
       }
     } while (!is_valid(move));
   }
   updateState(move);
-  player = player.otherPlayer();
+  player = player.other_player();
   set_valid_moves();
 }
 
 bool State::is_largeboard_full() const & {
   for (auto i = ZERO; i < THREE; ++i) {
     for (auto j = ZERO; j < THREE; ++j) {
-      if (largeboard[i][j].isNone()) {
+      if (largeboard[i][j].is_none()) {
         return false;
       }
     }
@@ -97,7 +97,7 @@ State::Player State::compute_winner(const Player &p) const & {
   }
   if (is_largeboard_full()) {
     auto [MEsum, OPsum] = sub_win_count();
-    return (MEsum > OPsum) ? player : player.otherPlayer();
+    return (MEsum > OPsum) ? player : player.other_player();
   }
   return Player{Player::Mark::None};
 } // namespace UTTT
@@ -106,12 +106,12 @@ void State::moveTo(const Move &move) {
   updateState(move);
   std::cerr << player << " Moved to ";
   std::cout << lastMove << '\n';
-  player = player.otherPlayer();
+  player = player.other_player();
 }
 State State::sim_move(const Move &move) const & {
   auto copy = *this;
   copy.updateState(move);
-  copy.player = copy.player.otherPlayer();
+  copy.player = copy.player.other_player();
   copy.set_valid_moves();
   return copy;
 }

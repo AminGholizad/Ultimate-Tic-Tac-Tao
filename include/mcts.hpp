@@ -27,7 +27,7 @@ template <class State> class Node : public std::enable_shared_from_this<Node<Sta
         children.push_back(std::make_shared<Node>(Node(player, state_)));
     }
     constexpr double score(const Player &player) const {
-        return wins.at(player) - wins.at(player.otherPlayer());
+        return wins.at(player) - wins.at(player.other_player());
     }
     constexpr double ucb1Score(const Player &player, const double &lnTotal) const {
         return (wins.at(player) / visits) + sqrt(2 * lnTotal / visits);

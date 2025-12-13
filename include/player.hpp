@@ -17,11 +17,11 @@ class Player {
     static constexpr std::array<char, static_cast<size_t>(Mark::Size)> symbols{'-', '#', 'X', 'O'};
     constexpr Player() = default;
     constexpr explicit Player(const Mark &mark_) : mark{mark_} {}
-    [[nodiscard]] constexpr bool isNone() const & { return mark == Mark::None; }
-    [[nodiscard]] constexpr bool isDraw() const & { return mark == Mark::Draw; }
+    [[nodiscard]] constexpr bool is_none() const & { return mark == Mark::None; }
+    [[nodiscard]] constexpr bool is_draw() const & { return mark == Mark::Draw; }
     [[nodiscard]] constexpr Mark operator()() const & { return mark; };
-    [[nodiscard]] constexpr Player otherPlayer() const & {
-        return (mark == Mark::X) ? Player(Mark::O) : Player(Mark::X);
+    [[nodiscard]] constexpr Player other_player() const & {
+        return (mark == Mark::X) ? Player{Mark::O} : Player{Mark::X};
     };
     // friends
     [[nodiscard]] friend constexpr bool operator==(const Player &lhs, const Player &rhs) {
@@ -41,5 +41,7 @@ class Player {
   private:
     Mark mark{Mark::None};
 };
+constexpr auto PlayerX = Player{Player::Mark::X};
+constexpr auto PlayerO = Player{Player::Mark::O};
 } // namespace Game
 #endif // !PLAYER_HPP
