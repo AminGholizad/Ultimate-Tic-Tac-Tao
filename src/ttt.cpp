@@ -1,57 +1,41 @@
 #include "ttt.hpp"
+#include "game.hpp"
 #include <iostream>
 namespace TTT {
-void State::debugBoard() const & {
-    if (lastMove != Move({-1, -1})) {
-        std::cerr << player.otherPlayer() << " moved to (" << lastMove << ")\n";
+void Tic_Tac_Toe::do_debugBoard() const & {
+    if (last_move != Move({-1, -1})) {
+        std::cerr << player.other_player() << " moved to (" << last_move << ")\n";
     }
     std::cerr << "-------\n";
     for (const auto &row : board) {
         std::cerr << '|';
-        for (const auto &elem : row) {
-            std::cerr << elem << '|';
+        for (const auto &cell : row) {
+            std::cerr << cell << '|';
         }
         std::cerr << "\n-------\n";
     }
     std::cerr << '\n';
 }
-void State::debugValidMoves() const & {
+void Tic_Tac_Toe::do_debugValidMoves() const & {
     std::cerr << "Your valid moves are:\n";
     for (const auto &move : valid_moves) {
         std::cerr << '(' << move << ")\n";
     }
     std::cerr << '\n';
 }
-void State::userMove() {
-    Move move;
-    switch (1) {
-    case 0:
-        do {
-            std::cerr << "Please enter a valid move\n";
-            [[fallthrough]];
-        case 1:
-            std::cin >> move;
-            std::cin.ignore();
-            if (move == Move({-1, -1})) {
-                return;
-            }
-        } while (!is_valid(move));
-    }
-    updateState(move);
-    set_valid_moves();
-}
-void State::set_valid_moves() {
+
+void Tic_Tac_Toe::do_set_valid_moves() {
     valid_moves.clear();
-    for (auto i = ZERO; i < THREE; ++i) {
-        for (auto j = ZERO; j < THREE; ++j) {
-            if (board[i][j].isNone()) {
-                valid_moves.emplace_back(i, j);
+    for (const auto &[x, row] : std::views::enumerate(board)) {
+        for (const auto &[y, cell] : std::views::enumerate(row)) {
+            if (cell.is_none()) {
+                valid_moves.emplace_back(x, y);
             }
         }
     }
 }
-State::Player State::compute_winner(const Player &test_player) const & {
-    for (auto i = ZERO; i < THREE; ++i) {
+Game::Player Tic_Tac_Toe::do_compute_winner(const Game::Player &test_player) const & {
+    for (auto i = 0ULL; i < 3; ++i) {
         if (board[i][0] == test_player && board[i][1] == test_player &&
             board[i][2] == test_player) {
             return test_player;
@@ -72,21 +56,16 @@ State::Player State::compute_winner(const Player &test_player) const & {
     }
     return Player{Player::Mark::None};
 }
-void State::updateState(const Move &move) {
+void Tic_Tac_Toe::do_updateState(const Move &move) {
     board[move.X()][move.Y()] = player;
-    lastMove = move;
-    winner = compute_winner(player);
-    player = player.otherPlayer();
+    last_move = move;
+    winner = do_compute_winner(player);
+    player = player.other_player();
 }
-void State::moveTo(const Move &move) {
-    updateState(move);
-    std::cerr << player.otherPlayer() << " moved to :";
-    std::cout << lastMove << '\n';
-}
-State State::sim_move(const Move &move) const & {
+Tic_Tac_Toe Tic_Tac_Toe::do_sim_move(const Move &move) const & {
     auto state_copy = *this;
-    state_copy.updateState(move);
-    state_copy.set_valid_moves();
+    state_copy.do_updateState(move);
+    state_copy.do_set_valid_moves();
     return state_copy;
 }
 } // namespace TTT

@@ -12,10 +12,10 @@ endif()
 
 add_executable(Ultimate-Tic-Tac-Tao
     src/main.cpp
-    src/mcts.cpp
-    src/negamax.cpp
+    #src/mcts.cpp
+    #src/negamax.cpp
     src/ttt.cpp
-    src/uttt.cpp
+    #src/uttt.cpp
     # Add all other .cpp files here
 )
 

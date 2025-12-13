@@ -25,9 +25,9 @@ template <class State> typename Node<State>::Node_Sptr Node<State>::bestChild() 
 template <class State> void Node<State>::status() const & {
     const auto player = state.getPlayer();
     std::cerr << "(#v " << visits << " ,{";
-    std::cerr << player << ':' << wins.at(player) << ", " << player.otherPlayer() << ':'
-              << wins.at(player.otherPlayer())
-              << "}) Score:" << wins.at(player) - wins.at(player.otherPlayer()) << "\n";
+    std::cerr << player << ':' << wins.at(player) << ", " << player.other_player() << ':'
+              << wins.at(player.other_player())
+              << "}) Score:" << wins.at(player) - wins.at(player.other_player()) << "\n";
 }
 template <class State> void Node<State>::allChildernStatus() const & {
     std::cerr << "Player:" << state.getPlayer() << " #childern " << children.size() << std::endl;
@@ -66,7 +66,7 @@ template <class State> void Node<State>::simulate() {
         tmp = tmp->getChild();
         depth++;
     }
-    if (const auto winner = tmp->state.getWinner(); !winner.isDraw()) {
+    if (const auto winner = tmp->state.getWinner(); !winner.is_draw()) {
         while (tmp != nullptr) {
             tmp->visited();
             tmp->won(winner, depth);

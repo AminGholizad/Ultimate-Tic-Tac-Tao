@@ -1,10 +1,8 @@
+#include "player.hpp"
 #include "ttt.hpp"
 #include <cassert>
 
 int main() {
-    constexpr auto X = TTT::State::Player{TTT::State::Player::Mark::X};
-    constexpr auto O = TTT::State::Player{TTT::State::Player::Mark::O};
-    constexpr auto NONE = TTT::State::Player{TTT::State::Player::Mark::None};
 
     {
         TTT::State game{};
@@ -13,7 +11,7 @@ int main() {
         game.moveTo({1, 0});
         game.moveTo({0, 2});
         game.moveTo({2, 0});
-        assert(game.getWinner() == X);
+        assert(game.getWinner() == Game::PlayerX);
     }
 
     {
@@ -23,7 +21,7 @@ int main() {
         game.moveTo({0, 1});
         game.moveTo({1, 2});
         game.moveTo({0, 2});
-        assert(game.getWinner() == X);
+        assert(game.getWinner() == Game::PlayerX);
     }
 
     {
@@ -33,7 +31,7 @@ int main() {
         game.moveTo({1, 1});
         game.moveTo({1, 2});
         game.moveTo({2, 2});
-        assert(game.getWinner() == X);
+        assert(game.getWinner() == Game::PlayerX);
     }
 
     {
@@ -44,7 +42,7 @@ int main() {
         game.moveTo({1, 0});
         game.moveTo({0, 2});
         game.moveTo({2, 0});
-        assert(game.getWinner() == O);
+        assert(game.getWinner() == Game::PlayerO);
     }
 
     {
@@ -55,7 +53,7 @@ int main() {
         game.moveTo({0, 1});
         game.moveTo({1, 2});
         game.moveTo({0, 2});
-        assert(game.getWinner() == O);
+        assert(game.getWinner() == Game::PlayerO);
     }
 
     {
@@ -66,7 +64,7 @@ int main() {
         game.moveTo({1, 1});
         game.moveTo({1, 2});
         game.moveTo({2, 2});
-        assert(game.getWinner() == O);
+        assert(game.getWinner() == Game::PlayerO);
     }
 
     {

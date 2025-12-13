@@ -1,6 +1,7 @@
 #ifndef TTT_HPP
 #define TTT_HPP
 #pragma once
+#include "game.hpp"
 #include "move.hpp"
 #include "player.hpp"
 #include <algorithm>
@@ -8,96 +9,50 @@
 #include <vector>
 
 namespace TTT {
-class State {
+
+class Tic_Tac_Toe : public Game::State<Tic_Tac_Toe> {
   public:
     using Player = Game::Player;
     using Move = Game::Move;
-    static constexpr size_t ZERO = 0ULL;
-    static constexpr size_t THREE = 3ULL;
-    using Board3x3 = std::array<std::array<Player, THREE>, THREE>; // TODO: convert to linear
-    constexpr State() = default;
-    constexpr explicit State(Board3x3 board_, Move move_ = {-1, -1},
-                             Player player_ = Player{Player::Mark::X})
-        : board(board_), lastMove(move_), player(player_) {}
+    using Moves = std::vector<Move>;
+    using Board = std::array<std::array<Player, 3>, 3>; // TODO: convert to linear
 
-    [[nodiscard]] friend constexpr bool operator==(const State &lhs, const State &rhs) {
-        if (lhs.player != rhs.player) {
-            return false;
-        }
-        if (lhs.lastMove != rhs.lastMove) {
-            return false;
-        }
-        for (auto i = ZERO; i < THREE; ++i) {
-            for (auto j = ZERO; j < THREE; ++j) {
-                if (lhs.board[i][j] != rhs.board[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    constexpr Tic_Tac_Toe() = default;
+    constexpr explicit Tic_Tac_Toe(Board board_, Move move_ = {-1, -1},
+                                   Player player_ = Player{Player::Mark::X})
+        : board(board_), last_move(move_), player(player_) {}
+
+    void do_debugValidMoves() const &;
+    void do_debugBoard() const &;
+
+    void do_updateState(const Move &move);
+    void do_set_valid_moves();
+
+    [[nodiscard]] Tic_Tac_Toe do_sim_move(const Move &move) const &;
+
+    [[nodiscard]] int do_calc_score(int color, int depth) const & {
+        return color * depth * static_cast<int>(last_move.X());
     }
-    [[nodiscard]] friend constexpr bool operator!=(const State &lhs, const State &rhs) {
-        if (lhs.player == rhs.player) {
-            return false;
-        }
-        if (lhs.lastMove == rhs.lastMove) {
-            return false;
-        }
-        for (auto i = ZERO; i < THREE; ++i) {
-            for (auto j = ZERO; j < THREE; ++j) {
-                if (lhs.board[i][j] == rhs.board[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+    [[nodiscard]] Game::Player do_compute_winner(const Game::Player &test_player) const &;
 
-    void debugBoard() const &;
-    void debugValidMoves() const &;
+    [[nodiscard]] decltype(auto) do_get_board(this auto &&self) { return (self.board); }
+    [[nodiscard]] decltype(auto) do_get_last_move(this auto &&self) { return (self.last_move); }
+    [[nodiscard]] decltype(auto) do_get_player(this auto &&self) { return (self.player); }
+    [[nodiscard]] decltype(auto) do_get_winner(this auto &&self) { return (self.winner); }
+    [[nodiscard]] decltype(auto) do_get_moves(this auto &&self) { return (self.valid_moves); }
 
-    [[nodiscard]] constexpr Player getWinner() const & { return winner; }
-    [[nodiscard]] constexpr Player getPlayer() const & { return player; }
-    [[nodiscard]] constexpr Move getMove() const & { return lastMove; }
-    [[nodiscard]] constexpr auto get_moves() const & { return valid_moves; }
-    [[nodiscard]] constexpr bool isOver() const & { return !winner.isNone(); }
-    [[nodiscard]] constexpr bool isDraw() const & { return winner.isDraw(); }
-
-    constexpr void bring_to_first(Move const &move) {
-        auto iter = std::ranges::find(valid_moves, move);
-        std::rotate(valid_moves.begin(), iter, iter + 1);
-    }
-
-    void userMove();
-    void set_valid_moves();
-    [[nodiscard]] State sim_move(Move const &move) const &;
-    void moveTo(Move const &move);
-    [[nodiscard]] constexpr auto game_over() const & {
-        return std::make_tuple(winner.isDraw(), winner == player, winner == player.otherPlayer());
+    [[nodiscard]] constexpr bool do_is_over() const & { return !winner.is_none(); }
+    [[nodiscard]] constexpr bool do_is_draw() const & { return winner.is_draw(); }
+    [[nodiscard]] constexpr bool do_is_valid(Move const &move) const & {
+        return std::ranges::find(valid_moves, move) != valid_moves.end();
     }
 
   private:
-    Board3x3 board{Player{Player::Mark::None}};
-    Move lastMove{-1, -1};
+    Board board{};
+    Move last_move{-1, -1};
     Player player{Player::Mark::X};
     Player winner{Player::Mark::None};
-    std::vector<Move> valid_moves;
-
-    [[nodiscard]] Player compute_winner(const Player &test_player) const &;
-    [[nodiscard]] constexpr bool is_board_full() const & {
-        for (auto i = ZERO; i < THREE; ++i) {
-            for (auto j = ZERO; j < THREE; ++j) {
-                if (board[i][j].isNone()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    [[nodiscard]] constexpr bool is_valid(Move const &move) const & {
-        return std::ranges::find(valid_moves, move) != valid_moves.end();
-    }
-    void updateState(Move const &move);
+    Moves valid_moves{};
 };
 } // namespace TTT
 #endif // !TTT_HPP
