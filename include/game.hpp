@@ -30,39 +30,6 @@ template <typename GAME> class State {
         return (self.do_get_moves());
     }
 
-    [[nodiscard]] friend constexpr bool operator==(const State &lhs, const State &rhs) {
-        if (lhs.get_player() != rhs.get_player()) {
-            return false;
-        }
-        if (lhs.get_last_move() != rhs.get_last_move()) {
-            return false;
-        }
-        for (const auto &[lhs_row, rhs_row] : std::views::zip(lhs.get_board(), rhs.get_board())) {
-            for (const auto &[lhs_cell, rhs_cell] : std::views::zip(lhs_row, rhs_row)) {
-                if (lhs_cell != rhs_cell) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    [[nodiscard]] friend constexpr bool operator!=(const State &lhs, const State &rhs) {
-        if (lhs.get_player() == rhs.get_player()) {
-            return false;
-        }
-        if (lhs.get_last_move() == rhs.get_last_move()) {
-            return false;
-        }
-        for (const auto &[lhs_row, rhs_row] : std::views::zip(lhs.get_board(), rhs.get_board())) {
-            for (const auto &[lhs_cell, rhs_cell] : std::views::zip(lhs_row, rhs_row)) {
-                if (lhs_cell == rhs_cell) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     [[nodiscard]] constexpr bool is_over(this const auto &self) { return self.do_is_over(); }
     [[nodiscard]] constexpr bool is_draw(this const auto &self) { return self.do_is_draw(); }
     [[nodiscard]] constexpr bool is_board_full(this const auto &self) {
@@ -76,7 +43,8 @@ template <typename GAME> class State {
         return true;
     }
     [[nodiscard]] constexpr bool is_valid(this const auto &self, Move const &move) {
-        return self.do_is_valid(move);
+        auto valid_moves = self.do_get_moves();
+        return std::ranges::find(valid_moves, move) != valid_moves.end();
     }
     constexpr void bring_to_first(this auto &self, Move const &move) {
         auto &moves = self.get_moves();
@@ -93,7 +61,7 @@ template <typename GAME> class State {
     }
     void moveTo(this auto &self, Move const &move);
     [[nodiscard]] constexpr auto game_over(this const auto &self) {
-        return std::make_tuple(self.get_winner().is_draw(), self.get_winner() == self.get_player(),
+        return std::make_tuple(self.get_moves().empty(), self.get_winner() == self.get_player(),
                                self.get_winner() == self.get_player().other_player());
     }
     [[nodiscard]] int calc_score(this const auto &self, int color, int depth) {
@@ -123,9 +91,6 @@ auto simulate(const GameState auto &state, const Timer::Timer &timer,
         }
         if (depth == 0 || no_moves_left || !timer.is_time_remaining(duration)) {
             auto score = state.calc_score(color, depth + 1);
-            // uttt:
-            //  auto [MEsum, OPsum]=sub_win_count();
-            //  score color * (MEsum - 2 * OPsum) * (depth + 1)
             return std::make_pair(score, Move{});
         }
     }
@@ -188,6 +153,40 @@ void moveTo(GameState auto &state, const Move &move) {
     state.updateState(move);
     std::cerr << state.get_player().other_player() << " moved to :";
     std::cout << state.get_last_move() << '\n';
+}
+
+template <GameState GT> [[nodiscard]] constexpr bool operator==(const GT &lhs, const GT &rhs) {
+    if (lhs.get_player() != rhs.get_player()) {
+        return false;
+    }
+    if (lhs.get_last_move() != rhs.get_last_move()) {
+        return false;
+    }
+    for (const auto &[lhs_row, rhs_row] : std::views::zip(lhs.get_board(), rhs.get_board())) {
+        for (const auto &[lhs_cell, rhs_cell] : std::views::zip(lhs_row, rhs_row)) {
+            if (lhs_cell != rhs_cell) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+template <GameState GT> [[nodiscard]] constexpr bool operator!=(const GT &lhs, const GT &rhs) {
+    if (lhs.get_player() == rhs.get_player()) {
+        return false;
+    }
+    if (lhs.get_last_move() == rhs.get_last_move()) {
+        return false;
+    }
+    for (const auto &[lhs_row, rhs_row] : std::views::zip(lhs.get_board(), rhs.get_board())) {
+        for (const auto &[lhs_cell, rhs_cell] : std::views::zip(lhs_row, rhs_row)) {
+            if (lhs_cell == rhs_cell) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 } // namespace Game
 #endif // !GAME_HPP

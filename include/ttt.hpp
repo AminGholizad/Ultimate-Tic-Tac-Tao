@@ -43,9 +43,6 @@ class Tic_Tac_Toe : public Game::State<Tic_Tac_Toe> {
 
     [[nodiscard]] constexpr bool do_is_over() const & { return !winner.is_none(); }
     [[nodiscard]] constexpr bool do_is_draw() const & { return winner.is_draw(); }
-    [[nodiscard]] constexpr bool do_is_valid(Move const &move) const & {
-        return std::ranges::find(valid_moves, move) != valid_moves.end();
-    }
 
   private:
     Board board{};
