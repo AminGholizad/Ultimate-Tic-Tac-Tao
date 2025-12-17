@@ -162,12 +162,8 @@ template <GameState GT> [[nodiscard]] constexpr bool operator==(const GT &lhs, c
     if (lhs.get_last_move() != rhs.get_last_move()) {
         return false;
     }
-    for (const auto &[lhs_row, rhs_row] : std::views::zip(lhs.get_board(), rhs.get_board())) {
-        for (const auto &[lhs_cell, rhs_cell] : std::views::zip(lhs_row, rhs_row)) {
-            if (lhs_cell != rhs_cell) {
-                return false;
-            }
-        }
+    if (lhs.get_board() != rhs.get_board()) {
+        return false;
     }
     return true;
 }
@@ -179,12 +175,8 @@ template <GameState GT> [[nodiscard]] constexpr bool operator!=(const GT &lhs, c
     if (lhs.get_last_move() == rhs.get_last_move()) {
         return false;
     }
-    for (const auto &[lhs_row, rhs_row] : std::views::zip(lhs.get_board(), rhs.get_board())) {
-        for (const auto &[lhs_cell, rhs_cell] : std::views::zip(lhs_row, rhs_row)) {
-            if (lhs_cell == rhs_cell) {
-                return false;
-            }
-        }
+    if (lhs.get_board() == rhs.get_board()) {
+        return false;
     }
     return true;
 }
