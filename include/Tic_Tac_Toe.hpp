@@ -18,9 +18,14 @@ class State : public Game::State<State> {
     using Board = std::array<std::array<Player, 3>, 3>; // TODO: convert to linear
 
     constexpr State() = default;
-    constexpr explicit State(Board board_, Move move_ = {-1, -1},
-                             Player player_ = Player{Player::Mark::X})
-        : board(board_), last_move(move_), player(player_) {}
+    constexpr explicit State(Board board_, Player player_ = Game::PlayerX)
+        : board(board_), player(player_) {
+        if (auto checked_winner = do_compute_winner(player); checked_winner.is_none()) {
+            winner = do_compute_winner(player.other_player());
+        } else {
+            winner = checked_winner;
+        }
+    }
 
     void do_debugValidMoves() const &;
     void do_debugBoard() const &;
