@@ -14,7 +14,7 @@ add_executable(Ultimate-Tic-Tac-Tao
     src/main.cpp
     #src/mcts.cpp
     #src/negamax.cpp
-    src/ttt.cpp
+    src/Tic_Tac_Toe.cpp
     src/uttt.cpp
     # Add all other .cpp files here
 )
@@ -68,7 +68,7 @@ if (Ultimate-Tic-Tac-Tao_BUILD_TESTS)
     enable_testing()
     add_executable(Ultimate-Tic-Tac-TaoTests
         tests/test_main.cpp
-        src/ttt.cpp
+        src/Tic_Tac_Toe.cpp
         src/uttt.cpp
         # Add all other .cpp files here
     )
