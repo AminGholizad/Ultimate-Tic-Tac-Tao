@@ -15,12 +15,13 @@ add_executable(Ultimate-Tic-Tac-Tao
     #src/mcts.cpp
     #src/negamax.cpp
     src/ttt.cpp
-    #src/uttt.cpp
+    src/uttt.cpp
     # Add all other .cpp files here
 )
 
 add_subdirectory(lib/Random-Helper)
 add_subdirectory(lib/Timer)
+
 target_link_libraries(Ultimate-Tic-Tac-Tao PRIVATE Random-Helper::Random-Helper Timer::Timer)
 
 set_target_properties(Ultimate-Tic-Tac-Tao PROPERTIES
@@ -52,15 +53,27 @@ target_link_options(Ultimate-Tic-Tac-Tao PRIVATE
     \$<$<CONFIG:RelWithDebInfo>:-g>
 )
 
-option(Ultimate-Tic-Tac-Tao_BUILD_TESTS "Build tests" ON)
+option(Ultimate-Tic-Tac-Tao_BUILD_TESTS "Build tests" ${PROJECT_IS_TOP_LEVEL})
 if (Ultimate-Tic-Tac-Tao_BUILD_TESTS)
+    include(FetchContent)
+
+    FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.11.0
+    )
+
+    FetchContent_MakeAvailable(Catch2)
+
     enable_testing()
     add_executable(Ultimate-Tic-Tac-TaoTests
         tests/test_main.cpp
         src/ttt.cpp
+        src/uttt.cpp
         # Add all other .cpp files here
     )
-    target_link_libraries(Ultimate-Tic-Tac-TaoTests PRIVATE Random-Helper::Random-Helper Timer::Timer)
+    target_link_libraries(Ultimate-Tic-Tac-TaoTests PRIVATE Catch2::Catch2WithMain Random-Helper::Random-Helper Timer::Timer)
     target_include_directories(Ultimate-Tic-Tac-TaoTests PRIVATE ${PROJECT_SOURCE_DIR}/include)
-    add_test(NAME Ultimate-Tic-Tac-TaoTests COMMAND Ultimate-Tic-Tac-TaoTests)
+    include(Catch)
+    catch_discover_tests(Ultimate-Tic-Tac-TaoTests)
 endif()

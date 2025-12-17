@@ -1,7 +1,8 @@
 // #include "mcts.hpp"
 //  #include "negamax.hpp"
+#include "game.hpp"
 #include "ttt.hpp"
-// #include "uttt.hpp"
+#include "uttt.hpp"
 #include <Timer.hpp>
 #include <iostream>
 #include <string>
@@ -19,6 +20,7 @@ constexpr Timer::milliseconds_t HONDRED{100};
 // THOUSAND);
 
 void ttt(Timer::milliseconds_t time1 = HONDRED, Timer::milliseconds_t time2 = HONDRED);
+void uttt(Timer::milliseconds_t time1 = THOUSAND, Timer::milliseconds_t time2 = THOUSAND);
 
 int main(int argc, const char **argv) {
     std::vector<std::string> args(argv, argv + argc);
@@ -40,7 +42,7 @@ int main(int argc, const char **argv) {
     {
         cout << "enter ai engin (mcts, ngm) and their thinking time\n";
     }*/
-    ttt();
+    uttt();
     // mctsVSngm();
     return 0;
 }
@@ -55,7 +57,24 @@ void ttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
         time = (time == time1) ? time2 : time1;
     }
     game.debugBoard();
-    if (auto winner = game.get_winner(); !winner.is_draw()) {
+    if (const auto winner = game.get_winner(); !winner.is_draw()) {
+        std::cout << winner << " wins!\n";
+    } else {
+        std::cout << "It's a Draw!\n";
+    }
+}
+void uttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
+    auto game = UTTT::Ultimate_Tic_Tac_Toe();
+    game.debugBoard();
+    auto time = time1;
+    while (!game.is_over()) {
+        auto move = Game::choose_move(game, time);
+        Game::moveTo(game, move);
+        game.debugBoard();
+        time = (time == time1) ? time2 : time1;
+    }
+    game.debugBoard();
+    if (const auto winner = game.get_winner(); !winner.is_draw()) {
         std::cout << winner << " wins!\n";
     } else {
         std::cout << "It's a Draw!\n";

@@ -1,88 +1,84 @@
 #include "player.hpp"
 #include "ttt.hpp"
-#include <cassert>
+#include <catch2/catch_test_macros.hpp>
 
-int main() {
+TEST_CASE("TTT row win X") {
+    auto game = TTT::Tic_Tac_Toe();
+    Game::moveTo(game, {0, 0});
+    Game::moveTo(game, {0, 1});
+    Game::moveTo(game, {1, 0});
+    Game::moveTo(game, {0, 2});
+    Game::moveTo(game, {2, 0});
+    REQUIRE(game.get_winner() == Game::PlayerX);
+}
 
-    {
-        TTT::State game{};
-        game.moveTo({0, 0});
-        game.moveTo({0, 1});
-        game.moveTo({1, 0});
-        game.moveTo({0, 2});
-        game.moveTo({2, 0});
-        assert(game.getWinner() == Game::PlayerX);
-    }
+TEST_CASE("TTT col win X") {
+    auto game = TTT::Tic_Tac_Toe();
+    Game::moveTo(game, {0, 0});
+    Game::moveTo(game, {1, 0});
+    Game::moveTo(game, {0, 1});
+    Game::moveTo(game, {1, 2});
+    Game::moveTo(game, {0, 2});
+    REQUIRE(game.get_winner() == Game::PlayerX);
+}
 
-    {
-        TTT::State game{};
-        game.moveTo({0, 0});
-        game.moveTo({1, 0});
-        game.moveTo({0, 1});
-        game.moveTo({1, 2});
-        game.moveTo({0, 2});
-        assert(game.getWinner() == Game::PlayerX);
-    }
+TEST_CASE("TTT diag win X") {
+    auto game = TTT::Tic_Tac_Toe();
+    Game::moveTo(game, {0, 0});
+    Game::moveTo(game, {1, 0});
+    Game::moveTo(game, {1, 1});
+    Game::moveTo(game, {1, 2});
+    Game::moveTo(game, {2, 2});
+    REQUIRE(game.get_winner() == Game::PlayerX);
+}
 
-    {
-        TTT::State game{};
-        game.moveTo({0, 0});
-        game.moveTo({1, 0});
-        game.moveTo({1, 1});
-        game.moveTo({1, 2});
-        game.moveTo({2, 2});
-        assert(game.getWinner() == Game::PlayerX);
-    }
+TEST_CASE("TTT row win O") {
+    auto game = TTT::Tic_Tac_Toe();
+    Game::moveTo(game, {1, 1});
+    Game::moveTo(game, {0, 0});
+    Game::moveTo(game, {0, 1});
+    Game::moveTo(game, {1, 0});
+    Game::moveTo(game, {0, 2});
+    Game::moveTo(game, {2, 0});
+    REQUIRE(game.get_winner() == Game::PlayerO);
+}
 
-    {
-        TTT::State game{};
-        game.moveTo({1, 1});
-        game.moveTo({0, 0});
-        game.moveTo({0, 1});
-        game.moveTo({1, 0});
-        game.moveTo({0, 2});
-        game.moveTo({2, 0});
-        assert(game.getWinner() == Game::PlayerO);
-    }
+TEST_CASE("TTT col win O") {
+    auto game = TTT::Tic_Tac_Toe();
+    Game::moveTo(game, {2, 2});
+    Game::moveTo(game, {0, 0});
+    Game::moveTo(game, {1, 0});
+    Game::moveTo(game, {0, 1});
+    Game::moveTo(game, {1, 2});
+    Game::moveTo(game, {0, 2});
+    REQUIRE(game.get_winner() == Game::PlayerO);
+}
 
-    {
-        TTT::State game{};
-        game.moveTo({2, 2});
-        game.moveTo({0, 0});
-        game.moveTo({1, 0});
-        game.moveTo({0, 1});
-        game.moveTo({1, 2});
-        game.moveTo({0, 2});
-        assert(game.getWinner() == Game::PlayerO);
-    }
+TEST_CASE("TTT diag win O") {
+    auto game = TTT::Tic_Tac_Toe();
+    Game::moveTo(game, {0, 1});
+    Game::moveTo(game, {0, 0});
+    Game::moveTo(game, {1, 0});
+    Game::moveTo(game, {1, 1});
+    Game::moveTo(game, {1, 2});
+    Game::moveTo(game, {2, 2});
+    REQUIRE(game.get_winner() == Game::PlayerO);
+}
 
-    {
-        TTT::State game{};
-        game.moveTo({0, 1});
-        game.moveTo({0, 0});
-        game.moveTo({1, 0});
-        game.moveTo({1, 1});
-        game.moveTo({1, 2});
-        game.moveTo({2, 2});
-        assert(game.getWinner() == Game::PlayerO);
-    }
+TEST_CASE("TTT same board") {
+    auto game1 = TTT::Tic_Tac_Toe();
+    Game::moveTo(game1, {0, 0});
+    Game::moveTo(game1, {0, 1});
+    Game::moveTo(game1, {1, 0});
+    Game::moveTo(game1, {0, 2});
+    Game::moveTo(game1, {2, 0});
 
-    {
-        TTT::State game1{};
-        game1.moveTo({0, 0});
-        game1.moveTo({0, 1});
-        game1.moveTo({1, 0});
-        game1.moveTo({0, 2});
-        game1.moveTo({2, 0});
+    auto game2 = TTT::Tic_Tac_Toe();
+    Game::moveTo(game2, {1, 0});
+    Game::moveTo(game2, {0, 2});
+    Game::moveTo(game2, {0, 0});
+    Game::moveTo(game2, {0, 1});
+    Game::moveTo(game2, {2, 0});
 
-        TTT::State game2{};
-        game2.moveTo({1, 0});
-        game2.moveTo({0, 2});
-        game2.moveTo({0, 0});
-        game2.moveTo({0, 1});
-        game2.moveTo({2, 0});
-
-        assert(game1 == game2);
-    }
-    return 0;
+    REQUIRE(game1 == game2);
 }
