@@ -1,8 +1,8 @@
 // #include "mcts.hpp"
 //  #include "negamax.hpp"
 #include "Tic_Tac_Toe.hpp"
+#include "Ultimate_Tic_Tac_Toe.hpp"
 #include "game.hpp"
-#include "uttt.hpp"
 #include <Timer.hpp>
 #include <iostream>
 #include <string>
@@ -42,6 +42,7 @@ int main(int argc, const char **argv) {
     {
         cout << "enter ai engin (mcts, ngm) and their thinking time\n";
     }*/
+    ttt();
     uttt();
     // mctsVSngm();
     return 0;
@@ -64,7 +65,7 @@ void ttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
     }
 }
 void uttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
-    auto game = UTTT::Ultimate_Tic_Tac_Toe();
+    auto game = Ultimate_Tic_Tac_Toe::State();
     game.debugBoard();
     auto time = time1;
     while (!game.is_over()) {

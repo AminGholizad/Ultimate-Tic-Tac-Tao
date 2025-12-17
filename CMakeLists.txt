@@ -15,7 +15,7 @@ add_executable(Ultimate-Tic-Tac-Tao
     #src/mcts.cpp
     #src/negamax.cpp
     src/Tic_Tac_Toe.cpp
-    src/uttt.cpp
+    src/Ultimate_Tic_Tac_Toe.cpp
     # Add all other .cpp files here
 )
 
@@ -69,7 +69,7 @@ if (Ultimate-Tic-Tac-Tao_BUILD_TESTS)
     add_executable(Ultimate-Tic-Tac-TaoTests
         tests/test_main.cpp
         src/Tic_Tac_Toe.cpp
-        src/uttt.cpp
+        src/Ultimate_Tic_Tac_Toe.cpp
         # Add all other .cpp files here
     )
     target_link_libraries(Ultimate-Tic-Tac-TaoTests PRIVATE Catch2::Catch2WithMain Random-Helper::Random-Helper Timer::Timer)
