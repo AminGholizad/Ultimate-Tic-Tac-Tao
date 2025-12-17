@@ -1,7 +1,7 @@
 // #include "mcts.hpp"
 //  #include "negamax.hpp"
+#include "Tic_Tac_Toe.hpp"
 #include "game.hpp"
-#include "ttt.hpp"
 #include "uttt.hpp"
 #include <Timer.hpp>
 #include <iostream>
@@ -48,7 +48,7 @@ int main(int argc, const char **argv) {
 }
 
 void ttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
-    auto game = TTT::Tic_Tac_Toe();
+    auto game = Tic_Tac_Toe::State();
     game.debugBoard();
     auto time = time1;
     while (!game.is_over()) {

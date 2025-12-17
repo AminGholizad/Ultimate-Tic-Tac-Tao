@@ -1,9 +1,9 @@
+#include "Tic_Tac_Toe.hpp"
 #include "player.hpp"
-#include "ttt.hpp"
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("TTT row win X") {
-    auto game = TTT::Tic_Tac_Toe();
+    auto game = Tic_Tac_Toe::State();
     Game::moveTo(game, {0, 0});
     Game::moveTo(game, {0, 1});
     Game::moveTo(game, {1, 0});
@@ -13,7 +13,7 @@ TEST_CASE("TTT row win X") {
 }
 
 TEST_CASE("TTT col win X") {
-    auto game = TTT::Tic_Tac_Toe();
+    auto game = Tic_Tac_Toe::State();
     Game::moveTo(game, {0, 0});
     Game::moveTo(game, {1, 0});
     Game::moveTo(game, {0, 1});
@@ -23,7 +23,7 @@ TEST_CASE("TTT col win X") {
 }
 
 TEST_CASE("TTT diag win X") {
-    auto game = TTT::Tic_Tac_Toe();
+    auto game = Tic_Tac_Toe::State();
     Game::moveTo(game, {0, 0});
     Game::moveTo(game, {1, 0});
     Game::moveTo(game, {1, 1});
@@ -33,7 +33,7 @@ TEST_CASE("TTT diag win X") {
 }
 
 TEST_CASE("TTT row win O") {
-    auto game = TTT::Tic_Tac_Toe();
+    auto game = Tic_Tac_Toe::State();
     Game::moveTo(game, {1, 1});
     Game::moveTo(game, {0, 0});
     Game::moveTo(game, {0, 1});
@@ -44,7 +44,7 @@ TEST_CASE("TTT row win O") {
 }
 
 TEST_CASE("TTT col win O") {
-    auto game = TTT::Tic_Tac_Toe();
+    auto game = Tic_Tac_Toe::State();
     Game::moveTo(game, {2, 2});
     Game::moveTo(game, {0, 0});
     Game::moveTo(game, {1, 0});
@@ -55,7 +55,7 @@ TEST_CASE("TTT col win O") {
 }
 
 TEST_CASE("TTT diag win O") {
-    auto game = TTT::Tic_Tac_Toe();
+    auto game = Tic_Tac_Toe::State();
     Game::moveTo(game, {0, 1});
     Game::moveTo(game, {0, 0});
     Game::moveTo(game, {1, 0});
@@ -66,14 +66,14 @@ TEST_CASE("TTT diag win O") {
 }
 
 TEST_CASE("TTT same board") {
-    auto game1 = TTT::Tic_Tac_Toe();
+    auto game1 = Tic_Tac_Toe::State();
     Game::moveTo(game1, {0, 0});
     Game::moveTo(game1, {0, 1});
     Game::moveTo(game1, {1, 0});
     Game::moveTo(game1, {0, 2});
     Game::moveTo(game1, {2, 0});
 
-    auto game2 = TTT::Tic_Tac_Toe();
+    auto game2 = Tic_Tac_Toe::State();
     Game::moveTo(game2, {1, 0});
     Game::moveTo(game2, {0, 2});
     Game::moveTo(game2, {0, 0});
