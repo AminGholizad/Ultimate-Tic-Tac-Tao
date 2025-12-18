@@ -72,7 +72,7 @@ template <typename GAME> class State {
 }; // class State
 
 template <typename T>
-concept GameState = std::is_base_of_v<State<T>, T>;
+concept GameState = std::derived_from<T, State<T>>;
 
 template <typename STRATEGY> class Strategy {
   public:
@@ -82,7 +82,7 @@ template <typename STRATEGY> class Strategy {
     }
 };
 template <typename T>
-concept GameStrategy = std::is_base_of_v<Strategy<T>, T>;
+concept GameStrategy = std::derived_from<T, Strategy<T>>;
 
 auto userMove(GameState auto &state) {
     Move move;
