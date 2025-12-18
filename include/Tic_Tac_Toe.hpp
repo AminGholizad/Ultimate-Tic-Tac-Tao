@@ -25,6 +25,7 @@ class State : public Game::State<State> {
         } else {
             winner = checked_winner;
         }
+        set_valid_moves();
     }
 
     void do_debugValidMoves() const &;
@@ -54,7 +55,7 @@ class State : public Game::State<State> {
     Move last_move{-1, -1};
     Player player{Player::Mark::X};
     Player winner{Player::Mark::None};
-    Moves valid_moves{};
+    Moves valid_moves{{0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}};
 };
 } // namespace Tic_Tac_Toe
 #endif // !TTT_HPP

@@ -38,6 +38,7 @@ class State : public Game::State<State> {
                     fill_sub(i * 3, j * 3, draw);
                 }
             }
+            set_valid_moves();
         }
         if (auto checked_winner = do_compute_winner(player); checked_winner == player) {
             winner = checked_winner;
@@ -191,7 +192,15 @@ class State : public Game::State<State> {
     Move last_move{-1, -1};
     Player player{Player::Mark::X};
     Player winner{Player::Mark::None};
-    Moves valid_moves{};
+    Moves valid_moves{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8}, //
+                      {1, 0}, {1, 1}, {1, 2}, {1, 3}, {1, 4}, {1, 5}, {1, 6}, {1, 7}, {1, 8}, //
+                      {2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4}, {2, 5}, {2, 6}, {2, 7}, {2, 8}, //
+                      {3, 0}, {3, 1}, {3, 2}, {3, 3}, {3, 4}, {3, 5}, {3, 6}, {3, 7}, {3, 8}, //
+                      {4, 0}, {4, 1}, {4, 2}, {4, 3}, {4, 4}, {4, 5}, {4, 6}, {4, 7}, {4, 8}, //
+                      {5, 0}, {5, 1}, {5, 2}, {5, 3}, {5, 4}, {5, 5}, {5, 6}, {5, 7}, {5, 8}, //
+                      {6, 0}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {6, 6}, {6, 7}, {6, 8}, //
+                      {7, 0}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5}, {7, 6}, {7, 7}, {7, 8}, //
+                      {8, 0}, {8, 1}, {8, 2}, {8, 3}, {8, 4}, {8, 5}, {8, 6}, {8, 7}, {8, 8}};
 };
 } // namespace Ultimate_Tic_Tac_Toe
 
