@@ -1,6 +1,6 @@
 #include "Tic_Tac_Toe.hpp"
-#include "game.hpp"
 #include <iostream>
+#include <ranges>
 namespace Tic_Tac_Toe {
 void State::do_debugBoard() const & {
     if (last_move != Move({-1, -1})) {

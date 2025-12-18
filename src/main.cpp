@@ -1,8 +1,8 @@
 // #include "mcts.hpp"
-//  #include "negamax.hpp"
 #include "Tic_Tac_Toe.hpp"
 #include "Ultimate_Tic_Tac_Toe.hpp"
 #include "game.hpp"
+#include "negamax.hpp"
 #include <Timer.hpp>
 #include <iostream>
 #include <string>
@@ -50,10 +50,11 @@ int main(int argc, const char **argv) {
 
 void ttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
     auto game = Tic_Tac_Toe::State();
+    auto strategy = NEGAMAX::Negamax();
     game.debugBoard();
     auto time = time1;
     while (!game.is_over()) {
-        auto move = Game::choose_move(game, time);
+        auto move = strategy.choose_move(game, time);
         Game::moveTo(game, move);
         time = (time == time1) ? time2 : time1;
     }
@@ -66,10 +67,11 @@ void ttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
 }
 void uttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
     auto game = Ultimate_Tic_Tac_Toe::State();
+    auto strategy = NEGAMAX::Negamax();
     game.debugBoard();
     auto time = time1;
     while (!game.is_over()) {
-        auto move = Game::choose_move(game, time);
+        auto move = strategy.choose_move(game, time);
         Game::moveTo(game, move);
         game.debugBoard();
         time = (time == time1) ? time2 : time1;
