@@ -59,10 +59,6 @@ class State : public Game::State<State> {
     [[nodiscard]] constexpr bool do_is_over() const & { return !winner.is_none(); }
     [[nodiscard]] constexpr bool do_is_draw() const & { return winner.is_draw(); }
 
-    constexpr void bring_to_first(const Move &move) {
-        const auto iter = std::ranges::find(valid_moves, move);
-        std::rotate(valid_moves.begin(), iter, iter + 1);
-    }
     [[nodiscard]] constexpr std::pair<int, int> sub_win_count() const & {
         int MEsum = 0;
         int OPsum = 0;
