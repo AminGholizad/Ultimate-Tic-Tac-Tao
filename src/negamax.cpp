@@ -36,12 +36,11 @@ auto Negamax::simulate(const Game::GameState auto &state, const Timer::Timer &ti
 
 Game::Move Negamax::do_choose_move(Game::GameState auto &state,
                                    const Timer::milliseconds_t &duration) const & {
-    state.set_valid_moves();
     auto best_move = state.get_moves()[0];
     const auto timer = Timer::Timer();
     int depth = 1;
     while (timer.is_time_remaining(duration)) {
-        auto [_, move] = simulate(state, timer, duration, depth);
+        auto [unused, move] = simulate(state, timer, duration, depth);
         if (!timer.is_time_remaining(duration)) {
             break;
         }
