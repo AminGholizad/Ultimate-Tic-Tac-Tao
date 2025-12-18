@@ -180,9 +180,6 @@ class State : public Game::State<State> {
         set_valid_moves();
     }
 
-    [[nodiscard]] constexpr bool is_valid(Move const &move) const & {
-        return std::ranges::find(valid_moves, move) != valid_moves.end();
-    }
     [[nodiscard]] int do_calc_score(int color, int depth) const & {
         auto [MEsum, OPsum] = sub_win_count();
         return color * (MEsum - 2 * OPsum) * (depth + 1);
