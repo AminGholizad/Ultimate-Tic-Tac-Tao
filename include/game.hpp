@@ -38,7 +38,7 @@ template <typename GAME> class State {
         }
         return true;
     }
-    [[nodiscard]] constexpr bool is_valid(this const auto &self, Move const &move) {
+    [[nodiscard]] constexpr bool is_valid_move(this const auto &self, Move const &move) {
         auto valid_moves = self.do_get_moves();
         return std::ranges::find(valid_moves, move) != valid_moves.end();
     }
