@@ -22,7 +22,7 @@ constexpr Timer::milliseconds_t ONE{1};
 // THOUSAND);
 
 void ttt(Timer::milliseconds_t time1 = THOUSAND, Timer::milliseconds_t time2 = ONE / 100);
-void tttrnd_negamax(Timer::milliseconds_t time = THOUSAND);
+void tttrnd_negamax(Timer::milliseconds_t time = 2 * THOUSAND);
 void uttt(Timer::milliseconds_t time1 = 10 * THOUSAND, Timer::milliseconds_t time2 = 10 * THOUSAND);
 
 int main(int argc, const char **argv) {
@@ -54,15 +54,9 @@ void tttrnd_negamax(Timer::milliseconds_t time) {
     auto game = Tic_Tac_Toe::State();
     auto strategy1 = NEGAMAX::Negamax();
     auto strategy2 = RANDOM_MOVE::Random_Move();
-
-    game.debugBoard();
     while (!game.is_over()) {
         auto move = strategy1.choose_move(game, time);
-        std::cout << "before\n";
-        game.do_debugValidMoves();
         Game::moveTo(game, move);
-        game.do_debugValidMoves();
-        std::cout << "after\n";
         if (!game.is_over()) {
             move = strategy2.choose_move(game, time);
             Game::moveTo(game, move);
