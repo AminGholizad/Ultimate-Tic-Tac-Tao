@@ -5,11 +5,8 @@
 #include "player.hpp"
 #include <Timer.hpp>
 #include <algorithm>
-#include <limits>
 
 namespace Game {
-constexpr int INF{std::numeric_limits<int>::max()};
-constexpr Timer::milliseconds_t DEFAULT_DURATION{1000};
 
 template <typename GAME> class State {
   public:
@@ -77,55 +74,15 @@ template <typename GAME> class State {
 template <typename T>
 concept GameState = std::is_base_of_v<State<T>, T>;
 
-auto simulate(const GameState auto &state, const Timer::Timer &timer,
-              const Timer::milliseconds_t &duration, int depth, int alpha = -INF, int beta = INF,
-              int color = 1) {
-    {
-        auto [no_moves_left, did_I_win, did_opponent_win] = state.game_over();
-        if (did_I_win || did_opponent_win) {
-            return std::make_pair(
-                color * (static_cast<int>(did_I_win) - static_cast<int>(did_opponent_win)) * 100 *
-                    (depth + 1),
-                Move{});
-        }
-        if (depth == 0 || no_moves_left || !timer.is_time_remaining(duration)) {
-            auto score = state.calc_score(color, depth + 1);
-            return std::make_pair(score, Move{});
-        }
+template <typename STRATEGY> class Strategy {
+  public:
+    Move choose_move(this auto &&self, GameState auto &state,
+                     const Timer::milliseconds_t &duration) {
+        return self.do_choose_move(state, duration);
     }
-    int maxEval = -INF;
-    auto best_move = state.get_moves()[0];
-    for (const auto &mov : state.get_moves()) {
-        auto temp_state = state.sim_move(mov);
-        auto [val, move] = simulate(temp_state, timer, duration, depth - 1, -beta, -alpha, -color);
-        if (-val > maxEval) {
-            maxEval = -val;
-            best_move = mov;
-        }
-        alpha = (alpha < maxEval) ? maxEval : alpha;
-        if (beta <= alpha) {
-            break;
-        }
-    }
-    return std::make_pair(maxEval, best_move);
-}
-
-Move choose_move(GameState auto &state, const Timer::milliseconds_t &duration) {
-    state.set_valid_moves();
-    auto best_move = state.get_moves()[0];
-    const auto timer = Timer::Timer();
-    int depth = 1;
-    while (timer.is_time_remaining(duration)) {
-        auto [_, move] = simulate(state, timer, duration, depth);
-        if (!timer.is_time_remaining(duration)) {
-            break;
-        }
-        state.bring_to_first(move);
-        best_move = move;
-        depth++;
-    }
-    return best_move;
-}
+};
+template <typename T>
+concept GameStrategy = std::is_base_of_v<Strategy<T>, T>;
 
 auto userMove(GameState auto &state) {
     Move move;
