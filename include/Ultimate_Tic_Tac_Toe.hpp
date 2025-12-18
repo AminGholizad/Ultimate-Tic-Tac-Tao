@@ -20,8 +20,32 @@ class State : public Game::State<State> {
     using Board9x9 = std::array<std::array<Player, NINE>, NINE>;   // TODO: make this linear
     using Board3x3 = std::array<std::array<Player, THREE>, THREE>; // TODO: make this linear
     constexpr State() = default;
-    constexpr State(Board9x9 board_, Board3x3 largeboard_)
-        : board(board_), largeboard(largeboard_) {}
+    constexpr explicit State(Board9x9 board_) : board(board_) {
+        for (size_t i = 0; i < 3; i++) {
+            for (size_t j = 0; j < 3; j++) {
+                if (is_sub_winner(i * 3, j * 3, player)) {
+                    largeboard[i][j] = player;
+                    fill_sub(i * 3, j * 3, player);
+                    winner = do_compute_winner(player);
+                } else if (const auto other = player.other_player();
+                           is_sub_winner(i * 3, j * 3, other)) {
+                    largeboard[i][j] = other;
+                    fill_sub(i * 3, j * 3, other);
+                    winner = do_compute_winner(other);
+                } else if (const auto draw = Player{Player::Mark::Draw};
+                           is_sub_full(i * 3, j * 3)) {
+                    largeboard[i][j] = draw;
+                    fill_sub(i * 3, j * 3, draw);
+                }
+            }
+        }
+        if (auto checked_winner = do_compute_winner(player); checked_winner == player) {
+            winner = checked_winner;
+        } else if (checked_winner = do_compute_winner(player.other_player());
+                   checked_winner == player.other_player()) {
+            winner = checked_winner;
+        }
+    }
 
     void do_debugValidMoves() const &;
     void do_debugBoard() const &;
