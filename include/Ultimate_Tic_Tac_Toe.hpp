@@ -77,7 +77,7 @@ class State : public Game::State<State> {
     void debugLargeboard() const &;
     void debugSubboard(const size_t &x, const size_t &y) const &;
 
-    constexpr void do_set_valid_moves() {
+    constexpr void set_valid_moves() {
         if (valid_moves.empty()) {
             init_valid_moves();
         } else {
@@ -177,6 +177,7 @@ class State : public Game::State<State> {
             winner = do_compute_winner(player);
         }
         player = player.other_player();
+        set_valid_moves();
     }
 
     [[nodiscard]] constexpr bool is_valid(Move const &move) const & {

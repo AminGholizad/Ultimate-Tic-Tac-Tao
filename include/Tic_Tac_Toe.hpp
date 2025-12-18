@@ -31,7 +31,7 @@ class State : public Game::State<State> {
     void do_debugBoard() const &;
 
     void do_updateState(const Move &move);
-    void do_set_valid_moves();
+    void set_valid_moves();
 
     [[nodiscard]] State do_sim_move(const Move &move) const &;
 

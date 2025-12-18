@@ -24,7 +24,7 @@ void State::do_debugValidMoves() const & {
     std::cerr << '\n';
 }
 
-void State::do_set_valid_moves() {
+void State::set_valid_moves() {
     valid_moves.clear();
     for (const auto &[x, row] : std::views::enumerate(board)) {
         for (const auto &[y, cell] : std::views::enumerate(row)) {
@@ -61,11 +61,11 @@ void State::do_updateState(const Move &move) {
     last_move = move;
     winner = do_compute_winner(player);
     player = player.other_player();
+    set_valid_moves();
 }
 State State::do_sim_move(const Move &move) const & {
     auto state_copy = *this;
     state_copy.do_updateState(move);
-    state_copy.do_set_valid_moves();
     return state_copy;
 }
 } // namespace Tic_Tac_Toe

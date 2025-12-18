@@ -87,7 +87,6 @@ State State::do_sim_move(const Move &move) const & {
     auto copy = *this;
     copy.updateState(move);
     copy.player = copy.player.other_player();
-    copy.set_valid_moves();
     return copy;
 }
 } // namespace Ultimate_Tic_Tac_Toe

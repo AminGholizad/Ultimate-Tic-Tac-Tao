@@ -51,7 +51,6 @@ template <typename GAME> class State {
     void debugBoard(this const auto &self) { self.do_debugBoard(); }
     void debugValidMoves(this const auto &self) { self.do_debugValidMoves(); }
 
-    void set_valid_moves(this auto &self) { self.do_set_valid_moves(); }
     template <typename Self> [[nodiscard]] Self sim_move(this const Self &self, Move const &move) {
         return self.do_sim_move(move);
     }
@@ -102,7 +101,6 @@ auto userMove(GameState auto &state) {
         } while (!state.is_valid(move));
     }
     state.updateState(move);
-    state.set_valid_moves();
 }
 
 void moveTo(GameState auto &state, const Move &move) {
