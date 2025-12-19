@@ -3,8 +3,8 @@
 #include <ranges>
 namespace Tic_Tac_Toe {
 void State::do_debugBoard() const & {
-    if (last_move != Move({-1, -1})) {
-        std::cerr << player.other_player() << " moved to (" << last_move << ")\n";
+    if (last_move) {
+        std::cerr << player.other_player() << " moved to (" << *last_move << ")\n";
     }
     std::cerr << "-------\n";
     for (const auto &row : board) {

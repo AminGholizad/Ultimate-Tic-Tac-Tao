@@ -4,8 +4,8 @@
 #include "game.hpp"
 #include "move.hpp"
 #include "player.hpp"
-#include <algorithm>
 #include <array>
+#include <optional>
 #include <vector>
 
 namespace Tic_Tac_Toe {
@@ -52,7 +52,7 @@ class State : public Game::State<State> {
 
   private:
     Board board{};
-    Move last_move{-1, -1};
+    std::optional<Move> last_move{};
     Player player{Player::Mark::X};
     Player winner{Player::Mark::None};
     Moves valid_moves{{0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}};

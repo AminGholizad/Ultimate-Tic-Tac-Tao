@@ -81,7 +81,7 @@ template <typename T>
 concept GameStrategy = std::derived_from<T, Strategy<T>>;
 
 auto userMove(GameState auto &state) {
-    Move move;
+    std::optional<Move> move;
     switch (1) {
     case 0:
         do {
@@ -90,14 +90,14 @@ auto userMove(GameState auto &state) {
         case 1:
             std::cin >> move;
             std::cin.ignore();
-            if (move == Move({-1, -1})) {
+            if (!move) {
                 state.get_player() = state.get_player().other_player();
                 state.get_moves().clear();
                 return;
             }
-        } while (!state.is_valid(move));
+        } while (!state.is_valid(*move));
     }
-    state.updateState(move);
+    state.updateState(*move);
 }
 
 void moveTo(GameState auto &state, const Move &move) {
@@ -110,9 +110,6 @@ template <GameState GT> [[nodiscard]] constexpr bool operator==(const GT &lhs, c
     if (lhs.get_player() != rhs.get_player()) {
         return false;
     }
-    if (lhs.get_last_move() != rhs.get_last_move()) {
-        return false;
-    }
     if (lhs.get_board() != rhs.get_board()) {
         return false;
     }
@@ -121,9 +118,6 @@ template <GameState GT> [[nodiscard]] constexpr bool operator==(const GT &lhs, c
 
 template <GameState GT> [[nodiscard]] constexpr bool operator!=(const GT &lhs, const GT &rhs) {
     if (lhs.get_player() == rhs.get_player()) {
-        return false;
-    }
-    if (lhs.get_last_move() == rhs.get_last_move()) {
         return false;
     }
     if (lhs.get_board() == rhs.get_board()) {

@@ -31,8 +31,15 @@ struct Move {
         ostream << move.x << ' ' << move.y;
         return ostream;
     }
-    friend std::istream &operator>>(std::istream &istream, Move &move) {
-        istream >> move.x >> move.y;
+    friend std::istream &operator>>(std::istream &istream, std::optional<Move> &move) {
+        int x_in{};
+        int y_in{};
+        istream >> x_in >> y_in;
+        if (x_in < 0 || y_in < 0) {
+            move = {};
+        } else {
+            move = {static_cast<size_t>(x_in), static_cast<size_t>(y_in)};
+        }
         return istream;
     }
 };
