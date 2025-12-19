@@ -4,7 +4,7 @@
 #include "game.hpp"
 #include "move.hpp"
 #include "player.hpp"
-#include <algorithm>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -188,7 +188,7 @@ class State : public Game::State<State> {
   private:
     Board9x9 board{};
     Board3x3 largeboard{};
-    Move last_move{-1, -1};
+    std::optional<Move> last_move{};
     Player player{Player::Mark::X};
     Player winner{Player::Mark::None};
     Moves valid_moves{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8}, //
