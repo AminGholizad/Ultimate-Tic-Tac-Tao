@@ -19,9 +19,6 @@ template <typename GAME> class State {
     [[nodiscard]] constexpr decltype(auto) get_player(this auto &&self) {
         return (self.do_get_player());
     }
-    [[nodiscard]] constexpr decltype(auto) get_last_move(this auto &&self) {
-        return (self.do_get_last_move());
-    }
     [[nodiscard]] constexpr decltype(auto) get_moves(this auto &&self) {
         return (self.do_get_moves());
     }
@@ -106,7 +103,7 @@ auto userMove(GameState auto &state) {
 void moveTo(GameState auto &state, const Move &move) {
     state.updateState(move);
     std::cerr << state.get_player().other_player() << " moved to :";
-    std::cout << state.get_last_move() << '\n';
+    std::cout << move << '\n';
 }
 
 template <GameState GT> [[nodiscard]] constexpr bool operator==(const GT &lhs, const GT &rhs) {
