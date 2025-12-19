@@ -37,7 +37,8 @@ class State : public Game::State<State> {
     [[nodiscard]] State do_sim_move(const Move &move) const &;
 
     [[nodiscard]] int do_calc_score(int color, int depth) const & {
-        return color * depth * static_cast<int>(last_move.X());
+        (void)this; // TODO: add two in a rows as a score metric
+        return color * depth;
     }
     [[nodiscard]] Game::Player do_compute_winner(const Game::Player &test_player) const &;
 
