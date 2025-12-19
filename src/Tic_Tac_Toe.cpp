@@ -57,7 +57,7 @@ Game::Player State::do_compute_winner(const Game::Player &test_player) const & {
     return Player{Player::Mark::None};
 }
 void State::do_updateState(const Move &move) {
-    board[move.X()][move.Y()] = player;
+    board[move.x][move.y] = player;
     last_move = move;
     winner = do_compute_winner(player);
     player = player.other_player();

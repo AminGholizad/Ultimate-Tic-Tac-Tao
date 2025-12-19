@@ -162,7 +162,7 @@ class State : public Game::State<State> {
     }
 
     constexpr void do_updateState(Move const &move) {
-        board[move.X()][move.Y()] = player;
+        board[move.x][move.y] = player;
         last_move = move;
         const auto [large_x, large_y] = move / 3;
         const auto sub_x = large_x * 3;
