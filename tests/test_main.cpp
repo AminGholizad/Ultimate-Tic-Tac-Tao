@@ -1,7 +1,9 @@
 #include "Tic_Tac_Toe.hpp"
 #include "Ultimate_Tic_Tac_Toe.hpp"
 #include "game.hpp"
+#include "negamax.hpp"
 #include "player.hpp"
+#include "random_move.hpp"
 #include <catch2/catch_test_macros.hpp>
 
 constexpr auto X = Game::PlayerX;
@@ -181,4 +183,34 @@ TEST_CASE("UTTT col win X") {
 
     auto game = Ultimate_Tic_Tac_Toe::State(board);
     REQUIRE(game.get_winner() == X);
+}
+
+TEST_CASE("random strategy chooses a valid move") {
+    auto random_strategy = RANDOM_MOVE::Random_Move();
+
+    auto game_uttt = Ultimate_Tic_Tac_Toe::State();
+    auto move = random_strategy.choose_move(game_uttt, {});
+    REQUIRE(game_uttt.is_valid_move(move));
+
+    auto game_ttt = Tic_Tac_Toe::State();
+    move = random_strategy.choose_move(game_ttt, {});
+    REQUIRE(game_ttt.is_valid_move(move));
+}
+
+TEST_CASE("negamax strategy chooses a valid move within time limit") {
+    auto negamax_strategy = NEGAMAX::Negamax();
+    auto time_limit = Timer::milliseconds_t{10};
+    auto game_uttt = Ultimate_Tic_Tac_Toe::State();
+    auto timer = Timer::Timer{};
+    auto move = negamax_strategy.choose_move(game_uttt, time_limit);
+    auto time = timer.elapsed();
+    REQUIRE(game_uttt.is_valid_move(move));
+    REQUIRE(time < time_limit);
+
+    auto game_ttt = Tic_Tac_Toe::State();
+    timer.reset();
+    move = negamax_strategy.choose_move(game_ttt, time_limit);
+    time = timer.elapsed();
+    REQUIRE(game_ttt.is_valid_move(move));
+    REQUIRE(time < time_limit);
 }

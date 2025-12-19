@@ -35,15 +35,14 @@ auto Negamax::simulate(const Game::GameState auto &state, const Timer::Timer &ti
 }
 
 Game::Move Negamax::do_choose_move(Game::GameState auto &state,
-                                   const Timer::milliseconds_t &duration) const & {
-    auto best_move = state.get_moves()[0];
+                                   const Timer::milliseconds_t &duration_) const & {
+
     const auto timer = Timer::Timer();
+    const auto duration = duration_ * 0.99;
+    auto best_move = state.get_moves()[0];
     int depth = 1;
     while (timer.is_time_remaining(duration)) {
         auto [unused, move] = simulate(state, timer, duration, depth);
-        if (!timer.is_time_remaining(duration)) {
-            break;
-        }
         state.bring_to_first(move);
         best_move = move;
         depth++;

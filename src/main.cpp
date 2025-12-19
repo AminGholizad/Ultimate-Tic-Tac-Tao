@@ -53,13 +53,13 @@ int main(int argc, const char **argv) {
 }
 void tttrnd_negamax(Timer::milliseconds_t time) {
     auto game = Tic_Tac_Toe::State();
-    auto strategy1 = NEGAMAX::Negamax();
-    auto strategy2 = RANDOM_MOVE::Random_Move();
+    auto negamax_strategy = NEGAMAX::Negamax();
+    auto random_strategy = RANDOM_MOVE::Random_Move();
     while (!game.is_over()) {
-        auto move = strategy1.choose_move(game, time);
+        auto move = negamax_strategy.choose_move(game, time);
         Game::moveTo(game, move);
         if (!game.is_over()) {
-            move = strategy2.choose_move(game, time);
+            move = random_strategy.choose_move(game, time);
             Game::moveTo(game, move);
         }
     }
@@ -72,13 +72,13 @@ void tttrnd_negamax(Timer::milliseconds_t time) {
 }
 void utttrnd_negamax(Timer::milliseconds_t time) {
     auto game = Ultimate_Tic_Tac_Toe::State();
-    auto strategy1 = NEGAMAX::Negamax();
-    auto strategy2 = RANDOM_MOVE::Random_Move();
+    auto negamax_strategy = NEGAMAX::Negamax();
+    auto random_strategy = RANDOM_MOVE::Random_Move();
     while (!game.is_over()) {
-        auto move = strategy1.choose_move(game, time);
+        auto move = negamax_strategy.choose_move(game, time);
         Game::moveTo(game, move);
         if (!game.is_over()) {
-            move = strategy1.choose_move(game, time);
+            move = random_strategy.choose_move(game, time);
             Game::moveTo(game, move);
         }
     }
