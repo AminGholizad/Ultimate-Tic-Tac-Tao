@@ -78,7 +78,7 @@ void utttrnd_negamax(Timer::milliseconds_t time) {
         auto move = strategy1.choose_move(game, time);
         Game::moveTo(game, move);
         if (!game.is_over()) {
-            move = strategy2.choose_move(game, time);
+            move = strategy1.choose_move(game, time);
             Game::moveTo(game, move);
         }
     }
