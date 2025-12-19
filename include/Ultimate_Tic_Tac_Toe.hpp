@@ -4,6 +4,7 @@
 #include "game.hpp"
 #include "move.hpp"
 #include "player.hpp"
+#include <cassert>
 #include <optional>
 #include <utility>
 #include <vector>
@@ -20,7 +21,8 @@ class State : public Game::State<State> {
     using Board9x9 = std::array<std::array<Player, NINE>, NINE>;   // TODO: make this linear
     using Board3x3 = std::array<std::array<Player, THREE>, THREE>; // TODO: make this linear
     constexpr State() = default;
-    constexpr explicit State(Board9x9 board_) : board(board_) {
+    constexpr State(Board9x9 board_, Move last_move_) : board(board_), last_move(last_move_) {
+        player = board_[last_move_.x][last_move_.y].other_player();
         for (size_t i = 0; i < 3; i++) {
             for (size_t j = 0; j < 3; j++) {
                 if (is_sub_winner(i * 3, j * 3, player)) {
@@ -77,45 +79,6 @@ class State : public Game::State<State> {
     void debugLargeboard() const &;
     void debugSubboard(const size_t &x, const size_t &y) const &;
 
-    constexpr void set_valid_moves() {
-        if (valid_moves.empty()) {
-            init_valid_moves();
-        } else {
-            update_valid_moves();
-        }
-    }
-
-    constexpr void init_valid_moves() {
-        for (auto i = ZERO; i < NINE; ++i) {
-            for (auto j = ZERO; j < NINE; ++j) {
-                valid_moves.emplace_back(i, j);
-            }
-        }
-    }
-    constexpr void update_valid_moves() {
-        valid_moves.clear();
-        const auto [large_x, large_y] = last_move % THREE;
-        const size_t sub_x = large_x * THREE;
-        const size_t sub_y = large_y * THREE;
-        if (largeboard[large_x][large_y].is_none()) {
-            for (auto i = ZERO; i < THREE; ++i) {
-                for (auto j = ZERO; j < THREE; ++j) {
-                    if (board[i + sub_x][j + sub_y].is_none()) {
-                        valid_moves.emplace_back(i + sub_x, j + sub_y);
-                    }
-                }
-            }
-        } else {
-            for (auto i = ZERO; i < NINE; ++i) {
-                for (auto j = ZERO; j < NINE; ++j) {
-                    if (board[i][j].is_none()) {
-                        valid_moves.emplace_back(i, j);
-                    }
-                }
-            }
-        }
-    }
-
     [[nodiscard]] State do_sim_move(const Move &move) const &;
 
     [[nodiscard]] Player do_compute_winner(Player const &test_player) const &;
@@ -151,14 +114,6 @@ class State : public Game::State<State> {
             }
         }
         return true;
-    }
-
-    constexpr void fill_sub(const size_t &x, const size_t &y, Player const &player_) {
-        for (auto i = x; i < x + 3; ++i) {
-            for (auto j = y; j < y + 3; ++j) {
-                board[i][j] = player_;
-            }
-        }
     }
 
     constexpr void do_updateState(Move const &move) {
@@ -200,6 +155,39 @@ class State : public Game::State<State> {
                       {6, 0}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {6, 6}, {6, 7}, {6, 8}, //
                       {7, 0}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5}, {7, 6}, {7, 7}, {7, 8}, //
                       {8, 0}, {8, 1}, {8, 2}, {8, 3}, {8, 4}, {8, 5}, {8, 6}, {8, 7}, {8, 8}};
+
+    constexpr void fill_sub(const size_t &x, const size_t &y, Player const &player_) {
+        for (auto i = x; i < x + 3; ++i) {
+            for (auto j = y; j < y + 3; ++j) {
+                board[i][j] = player_;
+            }
+        }
+    }
+
+    constexpr void set_valid_moves() {
+        valid_moves.clear();
+        assert(last_move);
+        const auto [large_x, large_y] = *last_move % THREE;
+        const size_t sub_x = large_x * THREE;
+        const size_t sub_y = large_y * THREE;
+        if (largeboard[large_x][large_y].is_none()) {
+            for (auto i = ZERO; i < THREE; ++i) {
+                for (auto j = ZERO; j < THREE; ++j) {
+                    if (board[i + sub_x][j + sub_y].is_none()) {
+                        valid_moves.emplace_back(i + sub_x, j + sub_y);
+                    }
+                }
+            }
+        } else {
+            for (auto i = ZERO; i < NINE; ++i) {
+                for (auto j = ZERO; j < NINE; ++j) {
+                    if (board[i][j].is_none()) {
+                        valid_moves.emplace_back(i, j);
+                    }
+                }
+            }
+        }
+    }
 };
 } // namespace Ultimate_Tic_Tac_Toe
 

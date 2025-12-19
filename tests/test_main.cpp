@@ -166,7 +166,7 @@ TEST_CASE("UTTT row win X") {
                                                 E, E, E, E, E, E, E, E, E, //
                                                 E, E, E, E, E, E, E, E, E, //
                                                 E, E, E, E, E, E, E, E, E};
-    auto game = Ultimate_Tic_Tac_Toe::State(board);
+    auto game = Ultimate_Tic_Tac_Toe::State(board, {0, 8});
     REQUIRE(game.get_winner() == X);
 }
 
@@ -181,7 +181,7 @@ TEST_CASE("UTTT col win X") {
                                                 X, E, E, E, E, E, E, E, E, //
                                                 X, E, E, E, E, E, E, E, E};
 
-    auto game = Ultimate_Tic_Tac_Toe::State(board);
+    auto game = Ultimate_Tic_Tac_Toe::State(board, {8, 0});
     REQUIRE(game.get_winner() == X);
 }
 
