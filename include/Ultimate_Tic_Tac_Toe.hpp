@@ -52,7 +52,6 @@ class State : public Game::State<State> {
     void do_debugBoard() const &;
 
     [[nodiscard]] decltype(auto) do_get_board(this auto &&self) { return (self.board); }
-    [[nodiscard]] decltype(auto) do_get_last_move(this auto &&self) { return (self.last_move); }
     [[nodiscard]] decltype(auto) do_get_player(this auto &&self) { return (self.player); }
     [[nodiscard]] decltype(auto) do_get_winner(this auto &&self) { return (self.winner); }
     [[nodiscard]] decltype(auto) do_get_moves(this auto &&self) { return (self.valid_moves); }
