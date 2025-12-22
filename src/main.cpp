@@ -46,6 +46,7 @@ int main(int argc, const char **argv) {
     {
         cout << "enter ai engin (mcts, ngm) and their thinking time\n";
     }*/
+    tttrnd_negamax();
     utttrnd_negamax();
     // uttt();
     //  mctsVSngm();
