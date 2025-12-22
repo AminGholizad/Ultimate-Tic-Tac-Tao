@@ -82,39 +82,6 @@ class State : public Game::State<State> {
     [[nodiscard]] State do_sim_move(const Move &move) const &;
 
     [[nodiscard]] Player do_compute_winner(Player const &test_player) const &;
-    [[nodiscard]] bool is_largeboard_full() const &;
-    [[nodiscard]] constexpr bool is_sub_winner(const size_t &x, const size_t &y,
-                                               const Player &test_player) const & {
-        for (auto i = ZERO; i < THREE; ++i) {
-            if (board[i + x][y] == test_player && board[i + x][1 + y] == test_player &&
-                board[i + x][2 + y] == test_player) {
-                return true;
-            }
-            if (board[x][i + y] == test_player && board[1 + x][i + y] == test_player &&
-                board[2 + x][i + y] == test_player) {
-                return true;
-            }
-        }
-        if (board[x][y] == test_player && board[1 + x][1 + y] == test_player &&
-            board[2 + x][2 + y] == test_player) {
-            return true;
-        }
-        if (board[x][2 + y] == test_player && board[1 + x][1 + y] == test_player &&
-            board[2 + x][y] == test_player) {
-            return true;
-        }
-        return false;
-    }
-    [[nodiscard]] constexpr bool is_sub_full(const size_t &x, const size_t &y) const & {
-        for (auto i = x; i < x + 3; ++i) {
-            for (auto j = y; j < y + 3; ++j) {
-                if (board[i][j].is_none()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 
     constexpr void do_updateState(Move const &move) {
         board[move.x][move.y] = player;
@@ -162,6 +129,40 @@ class State : public Game::State<State> {
                 board[i][j] = player_;
             }
         }
+    }
+
+    [[nodiscard]] bool is_largeboard_full() const &;
+    [[nodiscard]] constexpr bool is_sub_winner(const size_t &x, const size_t &y,
+                                               const Player &test_player) const & {
+        for (auto i = ZERO; i < THREE; ++i) {
+            if (board[i + x][y] == test_player && board[i + x][1 + y] == test_player &&
+                board[i + x][2 + y] == test_player) {
+                return true;
+            }
+            if (board[x][i + y] == test_player && board[1 + x][i + y] == test_player &&
+                board[2 + x][i + y] == test_player) {
+                return true;
+            }
+        }
+        if (board[x][y] == test_player && board[1 + x][1 + y] == test_player &&
+            board[2 + x][2 + y] == test_player) {
+            return true;
+        }
+        if (board[x][2 + y] == test_player && board[1 + x][1 + y] == test_player &&
+            board[2 + x][y] == test_player) {
+            return true;
+        }
+        return false;
+    }
+    [[nodiscard]] constexpr bool is_sub_full(const size_t &x, const size_t &y) const & {
+        for (auto i = x; i < x + 3; ++i) {
+            for (auto j = y; j < y + 3; ++j) {
+                if (board[i][j].is_none()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     constexpr void set_valid_moves() {
