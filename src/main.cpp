@@ -125,7 +125,7 @@ void uttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) 
     }
 }
 // void mctsVSmcts(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
-//     auto tmp = MCTS::Node<UTTT::State>().Ptr();
+//     auto tmp = MCTS::Node<UTTT::State>().ptr();
 //     tmp->debugBoard();
 //     auto time = time1;
 //     while (!tmp->isOver()) {
@@ -142,7 +142,7 @@ void uttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) 
 //     }
 // }
 // void userVSmcts(const Timer::milliseconds_t time) {
-//     auto tmp = MCTS::Node<UTTT::State>().Ptr();
+//     auto tmp = MCTS::Node<UTTT::State>().ptr();
 //     tmp->debugBoard();
 //     std::cerr << "Enter your move (-1 -1 to start as second player):\n";
 //     while (!tmp->isOver()) {
@@ -201,7 +201,7 @@ void uttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) 
 // }
 // void mctsVSngm(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) {
 //     auto state = UTTT::State{};
-//     auto mcts_bot = MCTS::Node(state).Ptr();
+//     auto mcts_bot = MCTS::Node(state).ptr();
 //     auto ngm_bot = NEGAMAX::Negamax(state);
 //     state.debugBoard();
 //     while (!state.isOver()) {
@@ -214,7 +214,7 @@ void uttt(const Timer::milliseconds_t time1, const Timer::milliseconds_t time2) 
 //         }
 //         std::cerr << "ngm: \n";
 //         state = ngm_bot.choose_move(time2).getState();
-//         mcts_bot = MCTS::Node(state).Ptr();
+//         mcts_bot = MCTS::Node(state).ptr();
 //         // state.debugBoard();
 //     }
 //     state.debugLargeboard();

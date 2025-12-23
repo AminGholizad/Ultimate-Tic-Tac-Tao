@@ -1,6 +1,7 @@
 #ifndef MCTS_HPP
 #define MCTS_HPP
 #pragma once
+#include "game.hpp"
 #include <Random-Helper.hpp>
 #include <Timer.hpp>
 #include <cmath>
@@ -8,46 +9,41 @@
 #include <memory>
 #include <vector>
 namespace MCTS {
-template <class State> class Node : public std::enable_shared_from_this<Node<State>> {
+template <Game::GameState State> class Node : public std::enable_shared_from_this<Node<State>> {
   public:
     using Node_Sptr = std::shared_ptr<Node>;
     using Node_Wptr = std::weak_ptr<Node>;
-    using Player = typename State::Player;
-    constexpr Node() = default;
+    using Player = Game::Player;
+
     constexpr explicit Node(const State &state_) : state(state_) {}
     constexpr Node(const Node_Wptr &parent_, const State &state_)
         : parent(parent_), state(state_) {}
     constexpr explicit Node(const Node_Sptr &node) : state(node->state) {}
-    [[nodiscard]] constexpr Node_Sptr Ptr() const & { return std::make_shared<Node>(*this); }
-    [[nodiscard]] constexpr Node_Wptr getThis() { return this->shared_from_this(); }
+
+    [[nodiscard]] constexpr Node_Sptr ptr() const & { return std::make_shared<Node>(*this); }
+    [[nodiscard]] constexpr Node_Wptr get_this() { return this->shared_from_this(); }
     constexpr void reset() { parent.reset(); }
-    constexpr void debugBoard() const & { state.debugBoard(); }
-    constexpr void debugLargeboard() const & { state.debugLargeboard(); }
-    constexpr void addChild(const Node_Wptr &player, const State &state_) {
-        children.push_back(std::make_shared<Node>(Node(player, state_)));
+    constexpr void add_child(const Node_Wptr &parent_, const State &state_) {
+        children.push_back(std::make_shared<Node>(Node(parent_, state_)));
     }
-    constexpr double score(const Player &player) const {
+    [[nodiscard]] constexpr double score(const Player &player) const & {
         return wins.at(player) - wins.at(player.other_player());
     }
-    constexpr double ucb1Score(const Player &player, const double &lnTotal) const {
+    [[nodiscard]] constexpr double ucb1_score(const Player &player, const double &lnTotal) const {
         return (wins.at(player) / visits) + sqrt(2 * lnTotal / visits);
     }
-    constexpr Player getPlayer() const & { return state.getPlayer(); }
-    Node_Sptr getChild() const &;
-    [[nodiscard]] constexpr Node_Sptr getRandomChild() const & {
-        return *rnd::select_randomly(children.begin(), children.end());
+    Node_Sptr get_child() const &;
+    [[nodiscard]] constexpr Node_Sptr get_random_child() const & {
+        return rnd::select_randomly_value(children);
     }
     Node_Sptr ucb1() const &;
-    Node_Sptr bestChild() const &;
+    Node_Sptr best_child() const &;
     void status() const &;
-    void allChildernStatus() const &;
+    void all_childern_status() const &;
     constexpr void won(const Player &player, const double &depth) { wins.at(player) += 1 / depth; }
     constexpr void visited() { ++visits; }
-    Node_Sptr choose_move(const Timer::milliseconds_t &duration);
+    Node_Sptr do_choose_move(const Timer::milliseconds_t &duration);
     void simulate();
-    [[nodiscard]] constexpr State getState() const & { return state; }
-    [[nodiscard]] constexpr bool isOver() const & { return state.isOver(); }
-    [[nodiscard]] constexpr Player getWinner() const & { return state.getWinner(); }
     Node_Sptr userMove();
 
   private:
