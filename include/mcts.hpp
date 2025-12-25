@@ -42,7 +42,6 @@ template <Game::GameState State> class Node : public std::enable_shared_from_thi
     void all_childern_status() const &;
     constexpr void won(const Player &player, const double &depth) { wins.at(player) += 1 / depth; }
     constexpr void visited() { ++visits; }
-    Node_Sptr do_choose_move(const Timer::milliseconds_t &duration);
     void simulate();
     Node_Sptr userMove();
 
@@ -52,6 +51,13 @@ template <Game::GameState State> class Node : public std::enable_shared_from_thi
     std::vector<Node_Sptr> children{};
     unsigned int visits{0};
     std::map<Player, double> wins{{Player{Player::Mark::X}, 0.}, {Player{Player::Mark::O}, 0.}};
+};
+template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>> {
+  public:
+    Game::Move do_choose_move(const Timer::milliseconds_t &duration);
+
+  private:
+    Node<State> Tree{};
 };
 } // namespace MCTS
 #endif // !MCTS_HPP
