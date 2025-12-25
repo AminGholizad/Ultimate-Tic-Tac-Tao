@@ -3,8 +3,7 @@
 #include <iostream>
 namespace MCTS {
 template <Game::GameState State> typename Node<State>::Node_Sptr Node<State>::get_child() const & {
-    return (std::all_of(children.begin(), children.end(),
-                        [](auto child) { return child->visits > 0; }))
+    return (std::ranges::all_of(children, [](auto child) { return child->visits > 0; }))
                ? ucb1()
                : get_random_child();
 }
@@ -37,21 +36,20 @@ template <Game::GameState State> void Node<State>::all_childern_status() const &
     best_child()->status();
 }
 template <Game::GameState State>
-typename Node<State>::Node_Sptr Node<State>::do_choose_move(const Timer::milliseconds_t &duration) {
-    const auto tmp = get_this();
+typename Game::Move Mcts<State>::do_choose_move(const Timer::milliseconds_t &duration) {
+    const auto tmp = Tree.get_this();
     // if (state.get_moves().empty()) {
     //     state.set_valid_moves();
     // }
-    for (const auto move : state.get_moves()) {
-        add_child(tmp, state.sim_move(move));
+    for (const auto move : Tree.state.get_moves()) {
+        add_child(tmp, Tree.state.sim_move(move));
     }
     const auto timer = Timer::Timer();
     while (timer.is_time_remaining(duration)) {
-        simulate();
+        Tree.simulate();
     }
-    auto best = best_child();
-    state.moveTo(best->state.get_last_move());
-    return best;
+    auto best = Tree.best_child();
+    return best->state.get_last_move();
 }
 template <Game::GameState State> void Node<State>::simulate() {
     auto tmp = get_child();
