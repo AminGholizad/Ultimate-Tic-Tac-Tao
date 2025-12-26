@@ -9,55 +9,59 @@
 #include <memory>
 #include <vector>
 namespace MCTS {
-template <Game::GameState State> class Node : public std::enable_shared_from_this<Node<State>> {
-  public:
-    using Node_Sptr = std::shared_ptr<Node>;
-    using Node_Wptr = std::weak_ptr<Node>;
-    using Player = Game::Player;
-
-    constexpr explicit Node(const State &state_) : state(state_) {}
-    constexpr Node(const Node_Wptr &parent_, const State &state_)
-        : parent(parent_), state(state_) {}
-    constexpr explicit Node(const Node_Sptr &node) : state(node->state) {}
-
-    [[nodiscard]] constexpr Node_Sptr ptr() const & { return std::make_shared<Node>(*this); }
-    [[nodiscard]] constexpr Node_Wptr get_this() { return this->shared_from_this(); }
-    constexpr void reset() { parent.reset(); }
-    constexpr void add_child(const Node_Wptr &parent_, const State &state_) {
-        children.push_back(std::make_shared<Node>(Node(parent_, state_)));
-    }
-    [[nodiscard]] constexpr double score(const Player &player) const & {
-        return wins.at(player) - wins.at(player.other_player());
-    }
-    [[nodiscard]] constexpr double ucb1_score(const Player &player, const double &lnTotal) const {
-        return (wins.at(player) / visits) + sqrt(2 * lnTotal / visits);
-    }
-    Node_Sptr get_child() const &;
-    [[nodiscard]] constexpr Node_Sptr get_random_child() const & {
-        return rnd::select_randomly_value(children);
-    }
-    Node_Sptr ucb1() const &;
-    Node_Sptr best_child() const &;
-    void status() const &;
-    void all_childern_status() const &;
-    constexpr void won(const Player &player, const double &depth) { wins.at(player) += 1 / depth; }
-    constexpr void visited() { ++visits; }
-    void simulate();
-    Node_Sptr userMove();
-
-  private:
-    Node_Wptr parent{};
-    State state{};
-    std::vector<Node_Sptr> children{};
-    unsigned int visits{0};
-    std::map<Player, double> wins{{Player{Player::Mark::X}, 0.}, {Player{Player::Mark::O}, 0.}};
-};
 template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>> {
   public:
-    Game::Move do_choose_move(const Timer::milliseconds_t &duration);
+    Game::Move do_choose_move(State &state, const Timer::milliseconds_t &duration);
 
   private:
-    Node<State> Tree{};
+    class Node {
+      public:
+        using Node_ptr = std::unique_ptr<Node>;
+        using Player = Game::Player;
+        constexpr Node() = default;
+        constexpr explicit Node(State state_) : state(std::move(state_)) {}
+        // constexpr Node(const Node_ptr &parent_, const State &state_) : parent(parent_),
+        // state(state_)
+        // {} constexpr explicit Node(const Node_ptr &node) : state(node->state) {}
+        constexpr void add_child(State state_, Game::Move move_) {
+            auto child = std::make_unique<Node>(state_);
+            child->move = move_;
+            child->parent = this;
+            children.push_back(std::move(child));
+            // return *children.back();
+        }
+        [[nodiscard]] constexpr double score(const Player &player) const & {
+            return wins.at(player) - wins.at(player.other_player());
+        }
+        [[nodiscard]] constexpr double ucb1_score(const Player &player,
+                                                  const double &lnTotal) const {
+            return (wins.at(player) / visits) + sqrt(2 * lnTotal / visits);
+        }
+        [[nodiscard]] constexpr Node *get_random_child() const & {
+            return rnd::select_randomly(children)->get();
+        }
+        constexpr void won(const Player &player, const double &depth) {
+            wins.at(player) += 1 / depth;
+        }
+        constexpr void visited() { ++visits; }
+
+        [[nodiscard]] Node *get_child() const &;
+
+        [[nodiscard]] Node *ucb1() const &;
+        [[nodiscard]] Node *best_child() const &;
+        void status() const &;
+        void all_childern_status() const &;
+        void simulate();
+        // Node_ptr userMove();
+
+        Node *parent{};
+        State state{};
+        Game::Move move{};
+        std::vector<Node_ptr> children{};
+        unsigned int visits{0};
+        std::map<Player, double> wins{{Player{Player::Mark::X}, 0.}, {Player{Player::Mark::O}, 0.}};
+    };
+    Node Tree;
 };
 } // namespace MCTS
 #endif // !MCTS_HPP

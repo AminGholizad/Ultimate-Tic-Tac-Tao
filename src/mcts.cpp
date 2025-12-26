@@ -1,33 +1,39 @@
 #include "mcts.hpp"
 #include <Timer.hpp>
+#include <algorithm>
 #include <iostream>
 namespace MCTS {
-template <Game::GameState State> typename Node<State>::Node_Sptr Node<State>::get_child() const & {
-    return (std::ranges::all_of(children, [](auto child) { return child->visits > 0; }))
+template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::get_child() const & {
+    return (std::ranges::all_of(children, [](const auto &child) { return child->visits > 0; }))
                ? ucb1()
                : get_random_child();
 }
-template <Game::GameState State> typename Node<State>::Node_Sptr Node<State>::ucb1() const & {
+template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::ucb1() const & {
     const auto lnTotal = std::log(visits);
     const auto player = state.get_player();
-    return *std::ranges::max_element(children, [player, lnTotal](auto node_a, auto node_b) {
-        return node_a->ucb1Score(player, lnTotal) < node_b->ucb1Score(player, lnTotal);
-    });
+    return std::ranges::max_element(children,
+                                    [player, lnTotal](const auto &node_a, const auto &node_b) {
+                                        return node_a->ucb1_score(player, lnTotal) <
+                                               node_b->ucb1_score(player, lnTotal);
+                                    })
+        ->get();
 }
-template <Game::GameState State> typename Node<State>::Node_Sptr Node<State>::best_child() const & {
+template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::best_child() const & {
     const auto player = state.get_player();
-    return *std::ranges::max_element(children, [player](auto node_a, auto node_b) {
-        return node_a->score(player) < node_b->score(player);
-    });
+    return std::ranges::max_element(children,
+                                    [player](const auto &node_a, const auto &node_b) {
+                                        return node_a->score(player) < node_b->score(player);
+                                    })
+        ->get();
 }
-template <Game::GameState State> void Node<State>::status() const & {
+template <Game::GameState State> void Mcts<State>::Node::status() const & {
     const auto player = state.get_player();
     std::cerr << "(#v " << visits << " ,{";
     std::cerr << player << ':' << wins.at(player) << ", " << player.other_player() << ':'
               << wins.at(player.other_player())
               << "}) Score:" << wins.at(player) - wins.at(player.other_player()) << "\n";
 }
-template <Game::GameState State> void Node<State>::all_childern_status() const & {
+template <Game::GameState State> void Mcts<State>::Node::all_childern_status() const & {
     std::cerr << "Player:" << state.get_player() << " #childern " << children.size() << std::endl;
     for (const auto &child : children) {
         child->status();
@@ -36,57 +42,61 @@ template <Game::GameState State> void Node<State>::all_childern_status() const &
     best_child()->status();
 }
 template <Game::GameState State>
-typename Game::Move Mcts<State>::do_choose_move(const Timer::milliseconds_t &duration) {
-    const auto tmp = Tree.get_this();
+typename Game::Move Mcts<State>::do_choose_move(State &state,
+                                                const Timer::milliseconds_t &duration) {
     // if (state.get_moves().empty()) {
     //     state.set_valid_moves();
     // }
-    for (const auto move : Tree.state.get_moves()) {
-        add_child(tmp, Tree.state.sim_move(move));
+    Tree = Node(state);
+    for (const auto move_ : Tree.state.get_moves()) {
+        Tree.add_child(Tree.state.sim_move(move_), move_);
     }
     const auto timer = Timer::Timer();
     while (timer.is_time_remaining(duration)) {
         Tree.simulate();
     }
     auto best = Tree.best_child();
-    return best->state.get_last_move();
+    return best->move;
 }
-template <Game::GameState State> void Node<State>::simulate() {
-    auto tmp = get_child();
+template <Game::GameState State> void Mcts<State>::Node::simulate() {
+    auto current_node = get_child();
     double depth = 0;
-    while (!tmp->state.isOver()) {
-        if (tmp->children.size() == 0) {
-            for (const auto move : tmp->state.get_moves()) {
-                tmp->addChild(tmp, tmp->state.sim_move(move));
+    while (!current_node->state.is_over()) {
+        if (current_node->children.size() == 0) {
+            for (const auto move_ : current_node->state.get_moves()) {
+                current_node->add_child(current_node->state.sim_move(move_), move_);
             }
         }
-        tmp = tmp->get_child();
+        current_node = current_node->get_child();
         depth++;
     }
-    if (const auto winner = tmp->state.get_winner(); !winner.is_draw()) {
-        while (tmp != nullptr) {
-            tmp->visited();
-            tmp->won(winner, depth);
-            tmp = tmp->parent.lock();
+    if (const auto winner = current_node->state.get_winner(); !winner.is_draw()) {
+        while (current_node != nullptr) {
+            current_node->visited();
+            current_node->won(winner, depth);
+            current_node = current_node->parent;
         }
     } else {
-        while (tmp != nullptr) {
-            tmp->visited();
-            tmp = tmp->parent.lock();
+        while (current_node != nullptr) {
+            current_node->visited();
+            current_node = current_node->parent;
         }
     }
 }
-template <Game::GameState State> typename Node<State>::Node_Sptr Node<State>::userMove() {
-    auto state_copy = state;
-    // state_copy.set_valid_moves();
-    state_copy.userMove();
-    for (auto child : children) {
-        if (child->state == state_copy) {
-            return child;
-        }
-    }
-    return std::make_shared<Node>(Node(get_this(), state_copy));
-}
+// template <Game::GameState State> typename Node::Node_ptr Node::userMove() {
+//     auto state_copy = state;
+//     // state_copy.set_valid_moves();
+//     state_copy.userMove();
+//     for (auto child : children) {
+//         if (child->state == state_copy) {
+//             return child;
+//         }
+//     }
+//     return std::make_shared<Node>(Node(get_this(), state_copy));
+// }
 } // namespace MCTS
-// #include "uttt.hpp"
-// template class MCTS::Node<UTTT::State>;
+#include "Tic_Tac_Toe.hpp"
+template class MCTS::Mcts<Tic_Tac_Toe::State>;
+
+#include "Ultimate_Tic_Tac_Toe.hpp"
+template class MCTS::Mcts<Ultimate_Tic_Tac_Toe::State>;
