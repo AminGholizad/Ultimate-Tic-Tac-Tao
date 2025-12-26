@@ -214,3 +214,22 @@ TEST_CASE("negamax strategy chooses a valid move within time limit") {
     REQUIRE(game_ttt.is_valid_move(move));
     REQUIRE(time < time_limit);
 }
+
+TEST_CASE("mcts strategy chooses a valid move within time limit") {
+    auto game_uttt = Ultimate_Tic_Tac_Toe::State();
+    auto mcts_strategy = MCTS::Mcts<Ultimate_Tic_Tac_Toe::State>();
+    auto time_limit = Timer::milliseconds_t{10};
+    auto timer = Timer::Timer{};
+    auto move = mcts_strategy.choose_move(game_uttt, time_limit);
+    auto time = timer.elapsed();
+    REQUIRE(game_uttt.is_valid_move(move));
+    REQUIRE(time < time_limit);
+
+    auto game_ttt = Tic_Tac_Toe::State();
+    mcts_strategy = MCTS::Mcts<Tic_Tac_Toe::State>();
+    timer.reset();
+    move = mcts_strategy.choose_move(game_ttt, time_limit);
+    time = timer.elapsed();
+    REQUIRE(game_ttt.is_valid_move(move));
+    REQUIRE(time < time_limit);
+}
