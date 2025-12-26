@@ -2,6 +2,7 @@
 #include "Tic_Tac_Toe.hpp"
 #include "Ultimate_Tic_Tac_Toe.hpp"
 #include "game.hpp"
+#include "mcts.hpp"
 #include "negamax.hpp"
 #include "random_move.hpp"
 #include <Timer.hpp>
@@ -23,6 +24,8 @@ constexpr Timer::milliseconds_t ONE{1};
 
 void ttt(Timer::milliseconds_t time1 = THOUSAND, Timer::milliseconds_t time2 = ONE / 100);
 void tttrnd_negamax(Timer::milliseconds_t time = 2 * THOUSAND);
+void tttrnd_mcts(Timer::milliseconds_t time = 2 * THOUSAND);
+void utttrnd_mcts(Timer::milliseconds_t time = 2 * THOUSAND);
 void utttrnd_negamax(Timer::milliseconds_t time = 2 * THOUSAND);
 void uttt(Timer::milliseconds_t time1 = 10 * THOUSAND, Timer::milliseconds_t time2 = 10 * THOUSAND);
 
@@ -46,10 +49,10 @@ int main(int argc, const char **argv) {
     {
         cout << "enter ai engin (mcts, ngm) and their thinking time\n";
     }*/
-    tttrnd_negamax();
-    utttrnd_negamax();
-    // uttt();
-    //  mctsVSngm();
+    utttrnd_mcts();
+    //  utttrnd_negamax();
+    //   uttt();
+    //    mctsVSngm();
     return 0;
 }
 void tttrnd_negamax(Timer::milliseconds_t time) {
@@ -58,6 +61,44 @@ void tttrnd_negamax(Timer::milliseconds_t time) {
     auto random_strategy = RANDOM_MOVE::Random_Move();
     while (!game.is_over()) {
         auto move = negamax_strategy.choose_move(game, time);
+        Game::moveTo(game, move);
+        if (!game.is_over()) {
+            move = random_strategy.choose_move(game, time);
+            Game::moveTo(game, move);
+        }
+    }
+    game.debugBoard();
+    if (const auto winner = game.get_winner(); !winner.is_draw()) {
+        std::cout << winner << " wins!\n";
+    } else {
+        std::cout << "It's a Draw!\n";
+    }
+}
+void tttrnd_mcts(Timer::milliseconds_t time) {
+    auto game = Tic_Tac_Toe::State();
+    auto mcts_strategy = MCTS::Mcts<Tic_Tac_Toe::State>();
+    auto random_strategy = RANDOM_MOVE::Random_Move();
+    while (!game.is_over()) {
+        auto move = mcts_strategy.choose_move(game, time);
+        Game::moveTo(game, move);
+        if (!game.is_over()) {
+            move = random_strategy.choose_move(game, time);
+            Game::moveTo(game, move);
+        }
+    }
+    game.debugBoard();
+    if (const auto winner = game.get_winner(); !winner.is_draw()) {
+        std::cout << winner << " wins!\n";
+    } else {
+        std::cout << "It's a Draw!\n";
+    }
+}
+void utttrnd_mcts(Timer::milliseconds_t time) {
+    auto game = Ultimate_Tic_Tac_Toe::State();
+    auto mcts_strategy = MCTS::Mcts<Ultimate_Tic_Tac_Toe::State>();
+    auto random_strategy = RANDOM_MOVE::Random_Move();
+    while (!game.is_over()) {
+        auto move = mcts_strategy.choose_move(game, time);
         Game::moveTo(game, move);
         if (!game.is_over()) {
             move = random_strategy.choose_move(game, time);
