@@ -34,8 +34,8 @@ auto Negamax::simulate(const Game::GameState auto &state, const Timer::Timer &ti
     return std::make_pair(maxEval, best_move);
 }
 
-Game::Move Negamax::do_choose_move(Game::GameState auto &state,
-                                   const Timer::milliseconds_t &duration_) const & {
+std::optional<Game::Move> Negamax::do_choose_move(Game::GameState auto &state,
+                                                  const Timer::milliseconds_t &duration_) const & {
 
     const auto timer = Timer::Timer();
     const auto duration = duration_ * 0.99;
@@ -53,11 +53,11 @@ Game::Move Negamax::do_choose_move(Game::GameState auto &state,
 
 #include "Tic_Tac_Toe.hpp"
 
-template Game::Move
+template std::optional<Game::Move>
 NEGAMAX::Negamax::do_choose_move<Tic_Tac_Toe::State>(Tic_Tac_Toe::State &state,
                                                      const Timer::milliseconds_t &duration) const &;
 
 #include "Ultimate_Tic_Tac_Toe.hpp"
 
-template Game::Move NEGAMAX::Negamax::do_choose_move<Ultimate_Tic_Tac_Toe::State>(
+template std::optional<Game::Move> NEGAMAX::Negamax::do_choose_move<Ultimate_Tic_Tac_Toe::State>(
     Ultimate_Tic_Tac_Toe::State &state, const Timer::milliseconds_t &duration) const &;

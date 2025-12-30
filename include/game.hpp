@@ -35,9 +35,13 @@ template <typename GAME> class State {
         }
         return true;
     }
-    [[nodiscard]] constexpr bool is_valid_move(this const auto &self, Move const &move) {
+    [[nodiscard]] constexpr bool is_valid_move(this const auto &self,
+                                               const std::optional<Game::Move> &move) {
+        if (!move) {
+            return true;
+        }
         auto valid_moves = self.do_get_moves();
-        return std::ranges::find(valid_moves, move) != valid_moves.end();
+        return std::ranges::find(valid_moves, *move) != valid_moves.end();
     }
     constexpr void bring_to_first(this auto &self, Move const &move) {
         auto &moves = self.get_moves();
@@ -51,7 +55,7 @@ template <typename GAME> class State {
     template <typename Self> [[nodiscard]] Self sim_move(this const Self &self, Move const &move) {
         return self.do_sim_move(move);
     }
-    void moveTo(this auto &self, Move const &move);
+
     [[nodiscard]] constexpr auto game_over(this const auto &self) {
         return std::make_tuple(self.get_moves().empty(), self.get_winner() == self.get_player(),
                                self.get_winner() == self.get_player().other_player());
@@ -59,7 +63,7 @@ template <typename GAME> class State {
     [[nodiscard]] int calc_score(this const auto &self, int color, int depth) {
         return self.do_calc_score(color, depth);
     }
-    void updateState(this auto &&self, Move const &move) { self.do_updateState(move); }
+    void updateState(this auto &&self, const Move &move) { self.do_updateState(move); }
 
   private:
     [[nodiscard]] Player compute_winner(this const auto &self, const Player &test_player) {
@@ -72,38 +76,22 @@ concept GameState = std::derived_from<T, State<T>>;
 
 template <typename STRATEGY> class Strategy {
   public:
-    Move choose_move(this auto &&self, GameState auto &state,
-                     const Timer::milliseconds_t &duration) {
+    std::optional<Move> choose_move(this auto &&self, GameState auto &state,
+                                    const Timer::milliseconds_t &duration) {
         return self.do_choose_move(state, duration);
     }
 };
 template <typename T>
 concept GameStrategy = std::derived_from<T, Strategy<T>>;
 
-auto userMove(GameState auto &state) {
-    std::optional<Move> move;
-    switch (1) {
-    case 0:
-        do {
-            std::cerr << "Please enter a valid move\n";
-            [[fallthrough]];
-        case 1:
-            std::cin >> move;
-            std::cin.ignore();
-            if (!move) {
-                state.get_player() = state.get_player().other_player();
-                state.get_moves().clear();
-                return;
-            }
-        } while (!state.is_valid(*move));
+void moveTo(GameState auto &state, const std::optional<Game::Move> &move) {
+    if (!move) {
+        state.get_player() = state.get_player().other_player();
+        return;
     }
     state.updateState(*move);
-}
-
-void moveTo(GameState auto &state, const Move &move) {
-    state.updateState(move);
     std::cerr << state.get_player().other_player() << " moved to :";
-    std::cout << move << '\n';
+    std::cout << *move << '\n';
 }
 
 template <GameState GT> [[nodiscard]] constexpr bool operator==(const GT &lhs, const GT &rhs) {

@@ -6,8 +6,8 @@
 namespace RANDOM_MOVE {
 class Random_Move : public Game::Strategy<Random_Move> {
   public:
-    Game::Move do_choose_move(Game::GameState auto &state,
-                              const Timer::milliseconds_t &unused_param) const & {
+    std::optional<Game::Move> do_choose_move(Game::GameState auto &state,
+                                             const Timer::milliseconds_t &unused_param) const & {
         (void)unused_param;
         return rnd::select_randomly_value(state.get_moves());
     }
