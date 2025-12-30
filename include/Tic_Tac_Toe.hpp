@@ -48,6 +48,7 @@ class State : public Game::State<State> {
     [[nodiscard]] decltype(auto) do_get_moves(this auto &&self) { return (self.valid_moves); }
 
     [[nodiscard]] constexpr bool do_is_over() const & { return !winner.is_none(); }
+    [[nodiscard]] constexpr bool do_is_first_move() const & { return !last_move; }
     [[nodiscard]] constexpr bool do_is_draw() const & { return winner.is_draw(); }
 
   private:
