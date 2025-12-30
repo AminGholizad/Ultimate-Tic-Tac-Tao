@@ -76,9 +76,8 @@ concept GameState = std::derived_from<T, State<T>>;
 
 template <typename STRATEGY> class Strategy {
   public:
-    std::optional<Move> choose_move(this auto &&self, GameState auto &state,
-                                    const Timer::milliseconds_t &duration) {
-        return self.do_choose_move(state, duration);
+    std::optional<Move> choose_move(this auto &&self, GameState auto &state) {
+        return self.do_choose_move(state);
     }
 };
 template <typename T>

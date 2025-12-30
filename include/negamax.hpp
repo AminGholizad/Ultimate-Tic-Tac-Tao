@@ -9,13 +9,14 @@ constexpr int INF{std::numeric_limits<int>::max()};
 constexpr Timer::milliseconds_t DEFAULT_DURATION{1000};
 class Negamax : public Game::Strategy<Negamax> {
   public:
-    std::optional<Game::Move> do_choose_move(Game::GameState auto &state,
-                                             const Timer::milliseconds_t &duration) const &;
+    constexpr explicit Negamax(Timer::milliseconds_t time_limit_)
+        : time_limit{time_limit_ * 0.99} {}
+    std::optional<Game::Move> do_choose_move(Game::GameState auto &state) const &;
 
   private:
-    auto simulate(const Game::GameState auto &state, const Timer::Timer &timer,
-                  const Timer::milliseconds_t &duration, int depth, int alpha = -INF,
-                  int beta = INF, int color = 1) const &;
+    Timer::milliseconds_t time_limit{DEFAULT_DURATION};
+    auto simulate(const Game::GameState auto &state, const Timer::Timer &timer, int depth,
+                  int alpha = -INF, int beta = INF, int color = 1) const &;
 };
 } // namespace NEGAMAX
 #endif // NEGAMAX_HPP

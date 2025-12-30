@@ -9,9 +9,11 @@
 #include <memory>
 #include <vector>
 namespace MCTS {
+constexpr Timer::milliseconds_t DEFAULT_DURATION{1000};
 template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>> {
   public:
-    std::optional<Game::Move> do_choose_move(State &state, const Timer::milliseconds_t &duration);
+    constexpr explicit Mcts(Timer::milliseconds_t time_limit_) : time_limit{time_limit_ * 0.99} {}
+    std::optional<Game::Move> do_choose_move(State &state);
 
   private:
     class Node {
@@ -57,6 +59,7 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
         std::map<Player, double> wins{{Player{Player::Mark::X}, 0.}, {Player{Player::Mark::O}, 0.}};
     };
     Node Tree;
+    Timer::milliseconds_t time_limit{DEFAULT_DURATION};
 };
 } // namespace MCTS
 #endif // !MCTS_HPP
