@@ -11,7 +11,7 @@
 namespace MCTS {
 template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>> {
   public:
-    Game::Move do_choose_move(State &state, const Timer::milliseconds_t &duration);
+    std::optional<Game::Move> do_choose_move(State &state, const Timer::milliseconds_t &duration);
 
   private:
     class Node {

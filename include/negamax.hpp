@@ -9,8 +9,8 @@ constexpr int INF{std::numeric_limits<int>::max()};
 constexpr Timer::milliseconds_t DEFAULT_DURATION{1000};
 class Negamax : public Game::Strategy<Negamax> {
   public:
-    Game::Move do_choose_move(Game::GameState auto &state,
-                              const Timer::milliseconds_t &duration) const &;
+    std::optional<Game::Move> do_choose_move(Game::GameState auto &state,
+                                             const Timer::milliseconds_t &duration) const &;
 
   private:
     auto simulate(const Game::GameState auto &state, const Timer::Timer &timer,

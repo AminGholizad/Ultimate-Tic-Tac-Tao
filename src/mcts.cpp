@@ -42,7 +42,8 @@ template <Game::GameState State> void Mcts<State>::Node::all_childern_status() c
     best_child()->status();
 }
 template <Game::GameState State>
-Game::Move Mcts<State>::do_choose_move(State &state, const Timer::milliseconds_t &duration) {
+std::optional<Game::Move> Mcts<State>::do_choose_move(State &state,
+                                                      const Timer::milliseconds_t &duration) {
     // TODO: check if Tree has value then check for state inside Tree and if it exists use it for
     // next iterations otherwise create a new Tree.
     Tree = Node(state);
