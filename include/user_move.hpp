@@ -8,6 +8,10 @@ class User_Move : public Game::Strategy<User_Move> {
   public:
     std::optional<Game::Move> do_choose_move(Game::GameState auto &state) {
         std::optional<Game::Move> move;
+        state.debugValidMoves();
+        if (state.is_first_move()) {
+            std::cerr << "Enter your move (-1 -1 to start as second player):\n";
+        }
         switch (1) {
         case 0:
             do {
@@ -16,7 +20,7 @@ class User_Move : public Game::Strategy<User_Move> {
             case 1:
                 std::cin >> move;
                 std::cin.ignore();
-                if (!move) {
+                if (!move && state.is_first_move()) {
                     // state.get_player() = state.get_player().other_player();
                     // state.get_moves().clear();
                     return move;
