@@ -5,10 +5,8 @@
 #include "game.hpp"
 namespace USER_MOVE {
 class User_Move : public Game::Strategy<User_Move> {
-
-    std::optional<Game::Move> do_choose_move(Game::GameState auto &state,
-                                             const Timer::milliseconds_t &unused_param) {
-        (void)unused_param;
+  public:
+    std::optional<Game::Move> do_choose_move(Game::GameState auto &state) {
         std::optional<Game::Move> move;
         switch (1) {
         case 0:

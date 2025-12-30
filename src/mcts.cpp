@@ -42,8 +42,7 @@ template <Game::GameState State> void Mcts<State>::Node::all_childern_status() c
     best_child()->status();
 }
 template <Game::GameState State>
-std::optional<Game::Move> Mcts<State>::do_choose_move(State &state,
-                                                      const Timer::milliseconds_t &duration) {
+std::optional<Game::Move> Mcts<State>::do_choose_move(State &state) {
     // TODO: check if Tree has value then check for state inside Tree and if it exists use it for
     // next iterations otherwise create a new Tree.
     Tree = Node(state);
@@ -51,7 +50,7 @@ std::optional<Game::Move> Mcts<State>::do_choose_move(State &state,
         Tree.add_child(Tree.state.sim_move(move_), move_);
     }
     const auto timer = Timer::Timer();
-    while (timer.is_time_remaining(duration)) {
+    while (timer.is_time_remaining(time_limit)) {
         Tree.simulate();
     }
     const auto best = Tree.best_child();
@@ -61,6 +60,7 @@ std::optional<Game::Move> Mcts<State>::do_choose_move(State &state,
 template <Game::GameState State> void Mcts<State>::Node::simulate() {
     auto current_node = get_child();
     double depth = 0;
+    // TODO: also check for time limit
     while (!current_node->state.is_over()) {
         if (current_node->children.size() == 0) {
             for (const auto move_ : current_node->state.get_moves()) {
