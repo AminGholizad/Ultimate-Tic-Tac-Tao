@@ -21,7 +21,7 @@ class User_Move : public Game::Strategy<User_Move> {
                     // state.get_moves().clear();
                     return move;
                 }
-            } while (!state.is_valid(*move));
+            } while (!state.is_valid_move(*move));
         }
         return move;
     }
