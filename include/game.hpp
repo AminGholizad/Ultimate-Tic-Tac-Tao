@@ -24,6 +24,9 @@ template <typename GAME> class State {
     }
 
     [[nodiscard]] constexpr bool is_over(this const auto &self) { return self.do_is_over(); }
+    [[nodiscard]] constexpr bool is_first_move(this const auto &self) {
+        return self.do_is_first_move();
+    }
     [[nodiscard]] constexpr bool is_draw(this const auto &self) { return self.do_is_draw(); }
     [[nodiscard]] constexpr bool is_board_full(this const auto &self) {
         for (const auto &row : self.get_board()) {
