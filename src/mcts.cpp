@@ -19,7 +19,7 @@ template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::ucb1() co
         ->get();
 }
 template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::best_child() const & {
-    const auto player = state.get_player();
+    const auto player = state.get_player().other_player();
     return std::ranges::max_element(children,
                                     [player](const auto &node_a, const auto &node_b) {
                                         return node_a->score(player) < node_b->score(player);
@@ -27,14 +27,14 @@ template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::best_chil
         ->get();
 }
 template <Game::GameState State> void Mcts<State>::Node::status() const & {
-    const auto player = state.get_player();
-    std::cerr << "(#v " << visits << " ,{";
+    const auto player = state.get_player().other_player(); // last played player
+    std::cerr << move << "(#visits " << visits << " ,{";
     std::cerr << player << ':' << wins.at(player) << ", " << player.other_player() << ':'
               << wins.at(player.other_player())
-              << "}) Score:" << wins.at(player) - wins.at(player.other_player()) << "\n";
+              << "}) Score:" << wins.at(player) - wins.at(player.other_player()) << '\n';
 }
 template <Game::GameState State> void Mcts<State>::Node::all_childern_status() const & {
-    std::cerr << "Player:" << state.get_player() << " #childern " << children.size() << std::endl;
+    std::cerr << "Player:" << state.get_player() << " #childern " << children.size() << '\n';
     for (const auto &child : children) {
         child->status();
     }
@@ -42,11 +42,9 @@ template <Game::GameState State> void Mcts<State>::Node::all_childern_status() c
     best_child()->status();
 }
 template <Game::GameState State>
-typename Game::Move Mcts<State>::do_choose_move(State &state,
-                                                const Timer::milliseconds_t &duration) {
-    // if (state.get_moves().empty()) {
-    //     state.set_valid_moves();
-    // }
+Game::Move Mcts<State>::do_choose_move(State &state, const Timer::milliseconds_t &duration) {
+    // TODO: check if Tree has value then check for state inside Tree and if it exists use it for
+    // next iterations otherwise create a new Tree.
     Tree = Node(state);
     for (const auto move_ : Tree.state.get_moves()) {
         Tree.add_child(Tree.state.sim_move(move_), move_);
@@ -55,7 +53,8 @@ typename Game::Move Mcts<State>::do_choose_move(State &state,
     while (timer.is_time_remaining(duration)) {
         Tree.simulate();
     }
-    auto best = Tree.best_child();
+    const auto best = Tree.best_child();
+    Tree.all_childern_status();
     return best->move;
 }
 template <Game::GameState State> void Mcts<State>::Node::simulate() {
@@ -71,6 +70,7 @@ template <Game::GameState State> void Mcts<State>::Node::simulate() {
         depth++;
     }
     if (const auto winner = current_node->state.get_winner(); !winner.is_draw()) {
+        // current_node->state.debugBoard();
         while (current_node != nullptr) {
             current_node->visited();
             current_node->won(winner, depth);
@@ -83,17 +83,6 @@ template <Game::GameState State> void Mcts<State>::Node::simulate() {
         }
     }
 }
-// template <Game::GameState State> typename Node::Node_ptr Node::userMove() {
-//     auto state_copy = state;
-//     // state_copy.set_valid_moves();
-//     state_copy.userMove();
-//     for (auto child : children) {
-//         if (child->state == state_copy) {
-//             return child;
-//         }
-//     }
-//     return std::make_shared<Node>(Node(get_this(), state_copy));
-// }
 } // namespace MCTS
 #include "Tic_Tac_Toe.hpp"
 template class MCTS::Mcts<Tic_Tac_Toe::State>;

@@ -78,7 +78,13 @@ State::Player State::do_compute_winner(const Player &test_player) const & {
     }
     if (is_largeboard_full()) {
         auto [MEsum, OPsum] = sub_win_count();
-        return (MEsum > OPsum) ? player : player.other_player();
+        if (MEsum > OPsum) {
+            return player;
+        }
+        if (MEsum == OPsum) {
+            return Game::Player{Game::Player::Mark::Draw};
+        }
+        return player.other_player();
     }
     return Player{Player::Mark::None};
 }
@@ -86,7 +92,6 @@ State::Player State::do_compute_winner(const Player &test_player) const & {
 State State::do_sim_move(const Move &move) const & {
     auto copy = *this;
     copy.updateState(move);
-    copy.player = copy.player.other_player();
     return copy;
 }
 } // namespace Ultimate_Tic_Tac_Toe

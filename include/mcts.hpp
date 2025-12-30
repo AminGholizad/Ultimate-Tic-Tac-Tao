@@ -20,15 +20,11 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
         using Player = Game::Player;
         constexpr Node() = default;
         constexpr explicit Node(State state_) : state(std::move(state_)) {}
-        // constexpr Node(const Node_ptr &parent_, const State &state_) : parent(parent_),
-        // state(state_)
-        // {} constexpr explicit Node(const Node_ptr &node) : state(node->state) {}
         constexpr void add_child(State state_, Game::Move move_) {
             auto child = std::make_unique<Node>(state_);
             child->move = move_;
             child->parent = this;
             children.push_back(std::move(child));
-            // return *children.back();
         }
         [[nodiscard]] constexpr double score(const Player &player) const & {
             return wins.at(player) - wins.at(player.other_player());
@@ -52,7 +48,6 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
         void status() const &;
         void all_childern_status() const &;
         void simulate();
-        // Node_ptr userMove();
 
         Node *parent{};
         State state{};
