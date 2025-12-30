@@ -10,7 +10,9 @@ After the first player that can move anywhere on the board, every move depends o
 2. If the mini board is won or full the player can move in anywhere that is not marked before
 
 ## AI algorithms
-Negamax algorithm and Monte carlo tree search
++ Random
++ Negamax with time limit
++ Monte carlo tree search with time limit
 
 
 
