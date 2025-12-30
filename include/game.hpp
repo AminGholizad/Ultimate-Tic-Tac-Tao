@@ -112,5 +112,23 @@ template <GameState GT> [[nodiscard]] constexpr bool operator!=(const GT &lhs, c
     }
     return true;
 }
+
+void run_game(GameState auto &game, GameStrategy auto &player1_strategy,
+              GameStrategy auto &player2_strategy) {
+    while (!game.is_over()) {
+        auto move = player1_strategy.choose_move(game);
+        moveTo(game, move);
+        if (!game.is_over()) {
+            move = player2_strategy.choose_move(game);
+            moveTo(game, move);
+        }
+    }
+    game.debugBoard();
+    if (const auto winner = game.get_winner(); !winner.is_draw()) {
+        std::cout << winner << " wins!\n";
+    } else {
+        std::cout << "It's a Draw!\n";
+    }
+}
 } // namespace Game
 #endif // !GAME_HPP
