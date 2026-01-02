@@ -21,8 +21,6 @@ class User_Move : public Game::Strategy<User_Move> {
                 std::cin >> move;
                 std::cin.ignore();
                 if (!move && state.is_first_move()) {
-                    // state.get_player() = state.get_player().other_player();
-                    // state.get_moves().clear();
                     return move;
                 }
             } while (!move || !state.is_valid_move(*move));

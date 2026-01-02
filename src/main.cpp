@@ -108,7 +108,7 @@ int main(int argc, const char **argv) {
     }
     else
     {
-        cout << "enter ai engin (mcts, ngm) and their thinking time\n";
+        cout << "enter ai engine (mcts, ngm) and their thinking time\n";
     }*/
 
     // uttt_mctsVSmcts();

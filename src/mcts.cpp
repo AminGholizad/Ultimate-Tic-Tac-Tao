@@ -54,7 +54,6 @@ std::optional<Game::Move> Mcts<State>::do_choose_move(State &state) {
         Tree.simulate();
     }
     const auto best = Tree.best_child();
-    Tree.all_childern_status();
     return best->move;
 }
 template <Game::GameState State> void Mcts<State>::Node::simulate() {
@@ -71,7 +70,6 @@ template <Game::GameState State> void Mcts<State>::Node::simulate() {
         depth++;
     }
     if (const auto winner = current_node->state.get_winner(); !winner.is_draw()) {
-        // current_node->state.debugBoard();
         while (current_node != nullptr) {
             current_node->visited();
             current_node->won(winner, depth);
