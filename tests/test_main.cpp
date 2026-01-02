@@ -1,6 +1,7 @@
 #include "Tic_Tac_Toe.hpp"
 #include "Ultimate_Tic_Tac_Toe.hpp"
 #include "game.hpp"
+#include "mcts.hpp"
 #include "negamax.hpp"
 #include "player.hpp"
 #include "random_move.hpp"
@@ -16,11 +17,11 @@ TEST_CASE("TTT col win X") {
                                     X, E, E, //
                                     X, E, E};
     auto game = Tic_Tac_Toe::State();
-    Game::moveTo(game, {0, 0});
-    Game::moveTo(game, {0, 1});
-    Game::moveTo(game, {1, 0});
-    Game::moveTo(game, {0, 2});
-    Game::moveTo(game, {2, 0});
+    Game::moveTo(game, Game::Move{0, 0});
+    Game::moveTo(game, Game::Move{0, 1});
+    Game::moveTo(game, Game::Move{1, 0});
+    Game::moveTo(game, Game::Move{0, 2});
+    Game::moveTo(game, Game::Move{2, 0});
     REQUIRE(game.get_winner() == X);
     REQUIRE(game.get_board() == board);
 }
@@ -30,11 +31,11 @@ TEST_CASE("TTT row win X") {
                                     O, E, O, //
                                     E, E, E};
     auto game = Tic_Tac_Toe::State();
-    Game::moveTo(game, {0, 0});
-    Game::moveTo(game, {1, 0});
-    Game::moveTo(game, {0, 1});
-    Game::moveTo(game, {1, 2});
-    Game::moveTo(game, {0, 2});
+    Game::moveTo(game, Game::Move{0, 0});
+    Game::moveTo(game, Game::Move{1, 0});
+    Game::moveTo(game, Game::Move{0, 1});
+    Game::moveTo(game, Game::Move{1, 2});
+    Game::moveTo(game, Game::Move{0, 2});
     REQUIRE(game.get_winner() == X);
     REQUIRE(game.get_board() == board);
 }
@@ -44,11 +45,11 @@ TEST_CASE("TTT diag win X") {
                                     O, X, O, //
                                     E, E, X};
     auto game = Tic_Tac_Toe::State();
-    Game::moveTo(game, {0, 0});
-    Game::moveTo(game, {1, 0});
-    Game::moveTo(game, {1, 1});
-    Game::moveTo(game, {1, 2});
-    Game::moveTo(game, {2, 2});
+    Game::moveTo(game, Game::Move{0, 0});
+    Game::moveTo(game, Game::Move{1, 0});
+    Game::moveTo(game, Game::Move{1, 1});
+    Game::moveTo(game, Game::Move{1, 2});
+    Game::moveTo(game, Game::Move{2, 2});
     REQUIRE(game.get_winner() == X);
     REQUIRE(game.get_board() == board);
 }
@@ -58,12 +59,12 @@ TEST_CASE("TTT col win O") {
                                     O, X, E, //
                                     O, E, E};
     auto game = Tic_Tac_Toe::State();
-    Game::moveTo(game, {1, 1});
-    Game::moveTo(game, {0, 0});
-    Game::moveTo(game, {0, 1});
-    Game::moveTo(game, {1, 0});
-    Game::moveTo(game, {0, 2});
-    Game::moveTo(game, {2, 0});
+    Game::moveTo(game, Game::Move{1, 1});
+    Game::moveTo(game, Game::Move{0, 0});
+    Game::moveTo(game, Game::Move{0, 1});
+    Game::moveTo(game, Game::Move{1, 0});
+    Game::moveTo(game, Game::Move{0, 2});
+    Game::moveTo(game, Game::Move{2, 0});
     REQUIRE(game.get_winner() == O);
     REQUIRE(game.get_board() == board);
 }
@@ -73,12 +74,12 @@ TEST_CASE("TTT row win O") {
                                     X, E, X, //
                                     E, E, X};
     auto game = Tic_Tac_Toe::State();
-    Game::moveTo(game, {2, 2});
-    Game::moveTo(game, {0, 0});
-    Game::moveTo(game, {1, 0});
-    Game::moveTo(game, {0, 1});
-    Game::moveTo(game, {1, 2});
-    Game::moveTo(game, {0, 2});
+    Game::moveTo(game, Game::Move{2, 2});
+    Game::moveTo(game, Game::Move{0, 0});
+    Game::moveTo(game, Game::Move{1, 0});
+    Game::moveTo(game, Game::Move{0, 1});
+    Game::moveTo(game, Game::Move{1, 2});
+    Game::moveTo(game, Game::Move{0, 2});
     REQUIRE(game.get_winner() == O);
     REQUIRE(game.get_board() == board);
 }
@@ -88,12 +89,12 @@ TEST_CASE("TTT diag win O") {
                                     X, O, X, //
                                     E, E, O};
     auto game = Tic_Tac_Toe::State();
-    Game::moveTo(game, {0, 1});
-    Game::moveTo(game, {0, 0});
-    Game::moveTo(game, {1, 0});
-    Game::moveTo(game, {1, 1});
-    Game::moveTo(game, {1, 2});
-    Game::moveTo(game, {2, 2});
+    Game::moveTo(game, Game::Move{0, 1});
+    Game::moveTo(game, Game::Move{0, 0});
+    Game::moveTo(game, Game::Move{1, 0});
+    Game::moveTo(game, Game::Move{1, 1});
+    Game::moveTo(game, Game::Move{1, 2});
+    Game::moveTo(game, Game::Move{2, 2});
     REQUIRE(game.get_winner() == O);
     REQUIRE(game.get_board() == board);
 }
@@ -139,18 +140,18 @@ TEST_CASE("TTT same board") {
                                     X, E, E, //
                                     X, E, E};
     auto game1 = Tic_Tac_Toe::State();
-    Game::moveTo(game1, {0, 0});
-    Game::moveTo(game1, {0, 1});
-    Game::moveTo(game1, {1, 0});
-    Game::moveTo(game1, {0, 2});
-    Game::moveTo(game1, {2, 0});
+    Game::moveTo(game1, Game::Move{0, 0});
+    Game::moveTo(game1, Game::Move{0, 1});
+    Game::moveTo(game1, Game::Move{1, 0});
+    Game::moveTo(game1, Game::Move{0, 2});
+    Game::moveTo(game1, Game::Move{2, 0});
 
     auto game2 = Tic_Tac_Toe::State();
-    Game::moveTo(game2, {1, 0});
-    Game::moveTo(game2, {0, 2});
-    Game::moveTo(game2, {0, 0});
-    Game::moveTo(game2, {0, 1});
-    Game::moveTo(game2, {2, 0});
+    Game::moveTo(game2, Game::Move{1, 0});
+    Game::moveTo(game2, Game::Move{0, 2});
+    Game::moveTo(game2, Game::Move{0, 0});
+    Game::moveTo(game2, Game::Move{0, 1});
+    Game::moveTo(game2, Game::Move{2, 0});
 
     REQUIRE(game1 == game2);
     REQUIRE(game1.get_board() == board);
@@ -189,27 +190,27 @@ TEST_CASE("random strategy chooses a valid move") {
     auto random_strategy = RANDOM_MOVE::Random_Move();
 
     auto game_uttt = Ultimate_Tic_Tac_Toe::State();
-    auto move = random_strategy.choose_move(game_uttt, {});
+    auto move = random_strategy.choose_move(game_uttt);
     REQUIRE(game_uttt.is_valid_move(move));
 
     auto game_ttt = Tic_Tac_Toe::State();
-    move = random_strategy.choose_move(game_ttt, {});
+    move = random_strategy.choose_move(game_ttt);
     REQUIRE(game_ttt.is_valid_move(move));
 }
 
 TEST_CASE("negamax strategy chooses a valid move within time limit") {
-    auto negamax_strategy = NEGAMAX::Negamax();
-    auto time_limit = Timer::milliseconds_t{10};
     auto game_uttt = Ultimate_Tic_Tac_Toe::State();
+    auto time_limit = Timer::milliseconds_t{10};
+    auto negamax_strategy = NEGAMAX::Negamax(time_limit);
     auto timer = Timer::Timer{};
-    auto move = negamax_strategy.choose_move(game_uttt, time_limit);
+    auto move = negamax_strategy.choose_move(game_uttt);
     auto time = timer.elapsed();
     REQUIRE(game_uttt.is_valid_move(move));
     REQUIRE(time < time_limit);
 
     auto game_ttt = Tic_Tac_Toe::State();
     timer.reset();
-    move = negamax_strategy.choose_move(game_ttt, time_limit);
+    move = negamax_strategy.choose_move(game_ttt);
     time = timer.elapsed();
     REQUIRE(game_ttt.is_valid_move(move));
     REQUIRE(time < time_limit);
@@ -217,18 +218,18 @@ TEST_CASE("negamax strategy chooses a valid move within time limit") {
 
 TEST_CASE("mcts strategy chooses a valid move within time limit") {
     auto game_uttt = Ultimate_Tic_Tac_Toe::State();
-    auto mcts_strategy = MCTS::Mcts<Ultimate_Tic_Tac_Toe::State>();
     auto time_limit = Timer::milliseconds_t{10};
+    auto mcts_strategy1 = MCTS::Mcts<Ultimate_Tic_Tac_Toe::State>(time_limit);
     auto timer = Timer::Timer{};
-    auto move = mcts_strategy.choose_move(game_uttt, time_limit);
+    auto move = mcts_strategy1.choose_move(game_uttt);
     auto time = timer.elapsed();
     REQUIRE(game_uttt.is_valid_move(move));
     REQUIRE(time < time_limit);
 
     auto game_ttt = Tic_Tac_Toe::State();
-    mcts_strategy = MCTS::Mcts<Tic_Tac_Toe::State>();
+    auto mcts_strategy2 = MCTS::Mcts<Tic_Tac_Toe::State>(time_limit);
     timer.reset();
-    move = mcts_strategy.choose_move(game_ttt, time_limit);
+    move = mcts_strategy2.choose_move(game_ttt);
     time = timer.elapsed();
     REQUIRE(game_ttt.is_valid_move(move));
     REQUIRE(time < time_limit);
