@@ -56,23 +56,23 @@ class State : public Game::State<State> {
                 MEsum += (board[1][i] == player) ? 1 : 0;
                 OPsum += (board[1][i] == player.other_player()) ? 1 : 0;
             }
-            if (board[0][0] == board[1][1]) {
-                MEsum += (board[0][0] == player) ? 1 : 0;
-                OPsum += (board[0][0] == player.other_player()) ? 1 : 0;
-            }
-            if (board[1][1] == board[2][2]) {
-                MEsum += (board[1][1] == player) ? 1 : 0;
-                OPsum += (board[1][1] == player.other_player()) ? 1 : 0;
-            }
+        }
+        if (board[0][0] == board[1][1]) {
+            MEsum += (board[0][0] == player) ? 1 : 0;
+            OPsum += (board[0][0] == player.other_player()) ? 1 : 0;
+        }
+        if (board[1][1] == board[2][2]) {
+            MEsum += (board[1][1] == player) ? 1 : 0;
+            OPsum += (board[1][1] == player.other_player()) ? 1 : 0;
+        }
 
-            if (board[0][2] == board[1][1]) {
-                MEsum += (board[0][2] == player) ? 1 : 0;
-                OPsum += (board[0][2] == player.other_player()) ? 1 : 0;
-            }
-            if (board[1][1] == board[2][0]) {
-                MEsum += (board[1][1] == player) ? 1 : 0;
-                OPsum += (board[1][1] == player.other_player()) ? 1 : 0;
-            }
+        if (board[0][2] == board[1][1]) {
+            MEsum += (board[0][2] == player) ? 1 : 0;
+            OPsum += (board[0][2] == player.other_player()) ? 1 : 0;
+        }
+        if (board[1][1] == board[2][0]) {
+            MEsum += (board[1][1] == player) ? 1 : 0;
+            OPsum += (board[1][1] == player.other_player()) ? 1 : 0;
         }
         return color * depth * (MEsum - OPsum);
     }
