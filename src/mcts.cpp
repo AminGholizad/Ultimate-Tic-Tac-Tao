@@ -43,9 +43,11 @@ template <Game::GameState State> void Mcts<State>::Node::all_childern_status() c
 }
 template <Game::GameState State>
 std::optional<Game::Move> Mcts<State>::do_choose_move(State &state) {
-    // TODO: check if Tree has value then check for state inside Tree and if it exists use it for
-    // next iterations otherwise create a new Tree.
-    Tree = Node(state);
+    if (auto result = Tree.find(state); result) {
+        Tree = Node::detach_subtree(result);
+    } else {
+        Tree = Node(state);
+    }
     for (const auto move_ : Tree.state.get_moves()) {
         Tree.add_child(Tree.state.sim_move(move_), move_);
     }
@@ -84,6 +86,19 @@ void Mcts<State>::Node::simulate(const Timer::Timer timer,
         }
     }
 }
+template <Game::GameState State>
+Mcts<State>::Node *Mcts<State>::Node::find(const State &state_) const & {
+    for (const auto &child : children) {
+        if (child->state == state_) {
+            return child.get();
+        }
+        if (auto result = child->find(state_); result != nullptr) {
+            return result;
+        }
+    }
+    return nullptr;
+}
+
 } // namespace MCTS
 #include "Tic_Tac_Toe.hpp"
 template class MCTS::Mcts<Tic_Tac_Toe::State>;

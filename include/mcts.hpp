@@ -22,11 +22,64 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
         using Player = Game::Player;
         constexpr Node() = default;
         constexpr explicit Node(State state_) : state(std::move(state_)) {}
+
+        Node(Node &&other) noexcept
+            : parent(nullptr), state(other.state), move(other.move),
+              children(std::move(other.children)), visits(other.visits),
+              wins(std::move(other.wins)) {
+            fix_children_parent();
+        }
+
+        Node &operator=(Node &&other) noexcept {
+            if (this != &other) {
+                state = other.state;
+                move = other.move;
+                children = std::move(other.children);
+                visits = other.visits;
+                wins = std::move(other.wins);
+                parent = nullptr;
+                fix_children_parent();
+            }
+            return *this;
+        }
+
+        void fix_children_parent() {
+            for (auto &child : children) {
+                child->parent = this;
+            }
+        }
+
+        static Node detach_subtree(Node *node) {
+            if (node == nullptr) {
+                return Node{};
+            }
+            if (node->parent == nullptr) {
+                return std::move(*node);
+            }
+
+            auto parent = node->parent;
+            auto &siblings = parent->children;
+
+            auto iter = std::ranges::find_if(
+                siblings, [&](const Node::Node_ptr &child) { return child.get() == node; });
+
+            if (iter == siblings.end()) {
+                return Node{};
+            }
+            Node tmp = std::move(*(*iter));
+            siblings.erase(iter);
+
+            tmp.parent = nullptr;
+            return tmp;
+        }
+
         constexpr void add_child(State state_, Game::Move move_) {
-            auto child = std::make_unique<Node>(state_);
-            child->move = move_;
-            child->parent = this;
-            children.push_back(std::move(child));
+            if (auto result = find(state_); result == nullptr) {
+                auto child = std::make_unique<Node>(state_);
+                child->move = move_;
+                child->parent = this;
+                children.push_back(std::move(child));
+            }
         }
         [[nodiscard]] constexpr double score(const Player &player) const & {
             return wins.at(player) - wins.at(player.other_player());
@@ -50,6 +103,7 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
         void status() const &;
         void all_childern_status() const &;
         void simulate(Timer::Timer timer, Timer::milliseconds_t time_limit);
+        [[nodiscard]] Node *find(const State &state_) const &;
 
         Node *parent{};
         State state{};
