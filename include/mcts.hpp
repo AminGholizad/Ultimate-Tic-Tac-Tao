@@ -12,7 +12,7 @@ namespace MCTS {
 constexpr Timer::milliseconds_t DEFAULT_DURATION{1000};
 template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>> {
   public:
-    constexpr explicit Mcts(Timer::milliseconds_t time_limit_) : time_limit{time_limit_ * 0.99} {}
+    constexpr explicit Mcts(Timer::milliseconds_t time_limit_) : time_limit{time_limit_ * 0.98} {}
     std::optional<Game::Move> do_choose_move(State &state);
 
   private:
@@ -49,7 +49,7 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
         [[nodiscard]] Node *best_child() const &;
         void status() const &;
         void all_childern_status() const &;
-        void simulate();
+        void simulate(Timer::Timer timer, Timer::milliseconds_t time_limit);
 
         Node *parent{};
         State state{};

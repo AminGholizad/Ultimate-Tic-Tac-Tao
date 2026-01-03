@@ -51,16 +51,17 @@ std::optional<Game::Move> Mcts<State>::do_choose_move(State &state) {
     }
     const auto timer = Timer::Timer();
     while (timer.is_time_remaining(time_limit)) {
-        Tree.simulate();
+        Tree.simulate(timer, time_limit);
     }
     const auto best = Tree.best_child();
     return best->move;
 }
-template <Game::GameState State> void Mcts<State>::Node::simulate() {
+template <Game::GameState State>
+void Mcts<State>::Node::simulate(const Timer::Timer timer,
+                                 const Timer::milliseconds_t time_limit_) {
     auto current_node = get_child();
     double depth = 0;
-    // TODO: also check for time limit
-    while (!current_node->state.is_over()) {
+    while (timer.is_time_remaining(time_limit_) && !current_node->state.is_over()) {
         if (current_node->children.size() == 0) {
             for (const auto move_ : current_node->state.get_moves()) {
                 current_node->add_child(current_node->state.sim_move(move_), move_);
@@ -69,7 +70,8 @@ template <Game::GameState State> void Mcts<State>::Node::simulate() {
         current_node = current_node->get_child();
         depth++;
     }
-    if (const auto winner = current_node->state.get_winner(); !winner.is_draw()) {
+    if (const auto winner = current_node->state.get_winner();
+        !winner.is_draw() && !winner.is_none()) {
         while (current_node != nullptr) {
             current_node->visited();
             current_node->won(winner, depth);
