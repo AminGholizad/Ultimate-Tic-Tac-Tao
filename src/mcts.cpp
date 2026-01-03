@@ -2,6 +2,7 @@
 #include <Timer.hpp>
 #include <algorithm>
 #include <iostream>
+#include <queue>
 namespace MCTS {
 template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::get_child() const & {
     return (std::ranges::all_of(children, [](const auto &child) { return child->visits > 0; }))
@@ -86,14 +87,19 @@ void Mcts<State>::Node::simulate(const Timer::Timer timer,
         }
     }
 }
-template <Game::GameState State>
-Mcts<State>::Node *Mcts<State>::Node::find(const State &state_) const & {
+template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::find(const State &state_) {
+    std::queue<Node *> que{};
     for (const auto &child : children) {
-        if (child->state == state_) {
-            return child.get();
+        que.push(child.get());
+    }
+    while (!que.empty()) {
+        auto *current = que.front();
+        que.pop();
+        if (current->state == state_) {
+            return current;
         }
-        if (auto result = child->find(state_); result != nullptr) {
-            return result;
+        for (const auto &child : current->children) {
+            que.push(child.get());
         }
     }
     return nullptr;
