@@ -19,7 +19,7 @@ template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::ucb1() co
         ->get();
 }
 template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::best_child() const & {
-    const auto player = state.get_player().other_player();
+    const auto player = state.get_player();
     return std::ranges::max_element(children,
                                     [player](const auto &node_a, const auto &node_b) {
                                         return node_a->score(player) < node_b->score(player);
