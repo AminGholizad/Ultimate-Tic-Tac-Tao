@@ -103,7 +103,7 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
         void status() const &;
         void all_childern_status() const &;
         void simulate(Timer::Timer timer, Timer::milliseconds_t time_limit);
-        [[nodiscard]] Node *find(const State &state_) const &;
+        [[nodiscard]] Node *find(const State &state_);
 
         Node *parent{};
         State state{};
