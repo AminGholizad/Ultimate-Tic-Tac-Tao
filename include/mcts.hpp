@@ -43,6 +43,10 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
             return *this;
         }
 
+        Node(const Node &) = delete;
+        Node operator=(const Node &) = delete;
+        ~Node() = default;
+
         void fix_children_parent() {
             for (auto &child : children) {
                 child->parent = this;
