@@ -12,11 +12,13 @@ class State : public Game::State<State> {
     using Move = Game::Move;
     using ui16 = std::uint16_t;
     using Moves = std::vector<Move>;
+    struct Board {
+        ui16 x_board;
+        ui16 o_board;
+    };
 
   public:
-    [[nodiscard]] decltype(auto) do_get_board(this auto &&self) {
-        return (std::pair{self.x_board, self.o_board});
-    }
+    [[nodiscard]] decltype(auto) do_get_board(this auto &&self) { return (self.board); }
     [[nodiscard]] decltype(auto) do_get_player(this auto &&self) { return (self.player); }
     [[nodiscard]] decltype(auto) do_get_winner(this auto &&self) { return (self.winner); }
     [[nodiscard]] decltype(auto) do_get_moves(this auto &&self) { return (self.valid_moves); }
@@ -58,15 +60,15 @@ class State : public Game::State<State> {
         return copy;
     }
     [[nodiscard]] constexpr bool do_is_board_full() const & {
-        return (x_board | o_board) == full_board;
+        return (board.x_board | board.o_board) == full_board;
     }
     [[nodiscard]] constexpr Player do_compute_winner(const Player &test_player) const & {
         const ui16 player_board = [&, test_player]() {
             if (test_player == Game::PlayerX) {
-                return x_board;
+                return board.x_board;
             }
             // if (test_player == Game::PlayerO)
-            return o_board;
+            return board.o_board;
         }();
         if (std::ranges::any_of(winMasks, [player_board](const ui16 mask) {
                 return (player_board & mask) == mask;
@@ -82,10 +84,10 @@ class State : public Game::State<State> {
         using WINS = std::pair<int, int>;
         const auto sum =
             std::ranges::fold_left(two_in_rowMasks, WINS{0, 0}, [&](WINS sums, const auto &mask) {
-                if ((x_board & mask) == mask) {
+                if ((board.x_board & mask) == mask) {
                     sums.first++;
                 }
-                if ((o_board & mask) == mask) {
+                if ((board.o_board & mask) == mask) {
                     sums.second++;
                 }
                 return sums;
@@ -95,9 +97,9 @@ class State : public Game::State<State> {
     void do_updateState(const Move &move) {
         const auto index = move2index(move);
         if (player == Game::PlayerX) {
-            x_board |= index;
+            board.x_board |= index;
         } else {
-            o_board |= index;
+            board.o_board |= index;
         }
         last_move = move;
         winner = do_compute_winner(player);
@@ -106,8 +108,7 @@ class State : public Game::State<State> {
     }
 
   private:
-    ui16 x_board{0};
-    ui16 o_board{0};
+    Board board{.x_board = 0, .o_board = 0};
     Player player{Game::PlayerX};
     Player winner{Player::Mark::None};
     std::optional<Move> last_move{std::nullopt};
