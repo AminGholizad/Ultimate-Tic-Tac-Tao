@@ -82,8 +82,8 @@ class State : public Game::State<State> {
 
     [[nodiscard]] State do_sim_move(const Move &move) const &;
 
-    [[nodiscard]] constexpr bool do_is_board_full(this const auto &self) {
-        for (const auto &row : self.get_board()) {
+    [[nodiscard]] constexpr bool do_is_board_full() const & {
+        for (const auto &row : board) {
             for (const auto &cell : row) {
                 if (cell.is_none()) {
                     return false;

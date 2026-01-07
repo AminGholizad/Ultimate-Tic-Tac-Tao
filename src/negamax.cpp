@@ -50,11 +50,13 @@ std::optional<Game::Move> Negamax::do_choose_move(Game::GameState auto &state) c
 } // namespace NEGAMAX
 
 #include "Tic_Tac_Toe.hpp"
-
 template std::optional<Game::Move>
 NEGAMAX::Negamax::do_choose_move<Tic_Tac_Toe::State>(Tic_Tac_Toe::State &state) const &;
 
-#include "Ultimate_Tic_Tac_Toe.hpp"
+#include "Tic_Tac_Toe_V2.hpp"
+template std::optional<Game::Move>
+NEGAMAX::Negamax::do_choose_move<Tic_Tac_Toe_V2::State>(Tic_Tac_Toe_V2::State &state) const &;
 
+#include "Ultimate_Tic_Tac_Toe.hpp"
 template std::optional<Game::Move> NEGAMAX::Negamax::do_choose_move<Ultimate_Tic_Tac_Toe::State>(
     Ultimate_Tic_Tac_Toe::State &state) const &;

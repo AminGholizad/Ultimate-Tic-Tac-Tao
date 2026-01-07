@@ -109,5 +109,8 @@ template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::find(cons
 #include "Tic_Tac_Toe.hpp"
 template class MCTS::Mcts<Tic_Tac_Toe::State>;
 
+#include "Tic_Tac_Toe_V2.hpp"
+template class MCTS::Mcts<Tic_Tac_Toe_V2::State>;
+
 #include "Ultimate_Tic_Tac_Toe.hpp"
 template class MCTS::Mcts<Ultimate_Tic_Tac_Toe::State>;

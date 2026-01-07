@@ -43,5 +43,7 @@ class Player {
 };
 constexpr auto PlayerX = Player{Player::Mark::X};
 constexpr auto PlayerO = Player{Player::Mark::O};
+constexpr auto Draw = Player{Player::Mark::Draw};
+constexpr auto None = Player{Player::Mark::None};
 } // namespace Game
 #endif // !PLAYER_HPP

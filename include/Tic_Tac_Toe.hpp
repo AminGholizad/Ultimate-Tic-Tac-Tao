@@ -28,6 +28,11 @@ class State : public Game::State<State> {
         set_valid_moves();
     }
 
+    [[nodiscard]] decltype(auto) do_get_board(this auto &&self) { return (self.board); }
+    [[nodiscard]] decltype(auto) do_get_player(this auto &&self) { return (self.player); }
+    [[nodiscard]] decltype(auto) do_get_winner(this auto &&self) { return (self.winner); }
+    [[nodiscard]] decltype(auto) do_get_moves(this auto &&self) { return (self.valid_moves); }
+
     void do_debugValidMoves() const &;
     void do_debugBoard() const &;
 
@@ -36,8 +41,8 @@ class State : public Game::State<State> {
 
     [[nodiscard]] State do_sim_move(const Move &move) const &;
 
-    [[nodiscard]] constexpr bool do_is_board_full(this const auto &self) {
-        for (const auto &row : self.get_board()) {
+    [[nodiscard]] constexpr bool do_is_board_full() const & {
+        for (const auto &row : board) {
             for (const auto &cell : row) {
                 if (cell.is_none()) {
                     return false;
@@ -88,11 +93,6 @@ class State : public Game::State<State> {
         return color * depth * (MEsum - OPsum);
     }
     [[nodiscard]] Game::Player do_compute_winner(const Game::Player &test_player) const &;
-
-    [[nodiscard]] decltype(auto) do_get_board(this auto &&self) { return (self.board); }
-    [[nodiscard]] decltype(auto) do_get_player(this auto &&self) { return (self.player); }
-    [[nodiscard]] decltype(auto) do_get_winner(this auto &&self) { return (self.winner); }
-    [[nodiscard]] decltype(auto) do_get_moves(this auto &&self) { return (self.valid_moves); }
 
     [[nodiscard]] constexpr bool do_is_over() const & { return !winner.is_none(); }
     [[nodiscard]] constexpr bool do_is_first_move() const & { return !last_move; }
