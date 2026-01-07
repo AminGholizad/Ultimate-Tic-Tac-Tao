@@ -7,10 +7,11 @@
 namespace NEGAMAX {
 constexpr int INF{std::numeric_limits<int>::max()};
 constexpr Timer::milliseconds_t DEFAULT_DURATION{1000};
+constexpr double TIME_LIMIT_REDUCTION_FACTOR{0.99};
 class Negamax : public Game::Strategy<Negamax> {
   public:
     constexpr explicit Negamax(Timer::milliseconds_t time_limit_)
-        : time_limit{time_limit_ * 0.99} {}
+        : time_limit{time_limit_ * TIME_LIMIT_REDUCTION_FACTOR} {}
     std::optional<Game::Move> do_choose_move(Game::GameState auto &state) const &;
 
   private:
