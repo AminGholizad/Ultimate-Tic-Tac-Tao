@@ -29,14 +29,7 @@ template <typename GAME> class State {
     }
     [[nodiscard]] constexpr bool is_draw(this const auto &self) { return self.do_is_draw(); }
     [[nodiscard]] constexpr bool is_board_full(this const auto &self) {
-        for (const auto &row : self.get_board()) {
-            for (const auto &cell : row) {
-                if (cell.is_none()) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return self.do_is_board_full();
     }
     [[nodiscard]] constexpr bool is_valid_move(this const auto &self,
                                                const std::optional<Game::Move> &move) {
