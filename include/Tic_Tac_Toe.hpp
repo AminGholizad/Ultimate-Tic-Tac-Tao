@@ -41,38 +41,38 @@ class State : public Game::State<State> {
         int OPsum{0};
         for (size_t i = 0; i < 3; ++i) {
             if (board[i][0] == board[i][1]) {
-                MEsum += (board[i][0] == player) ? 1 : 0;
-                OPsum += (board[i][0] == player.other_player()) ? 1 : 0;
+                MEsum += static_cast<int>(board[i][0] == player);
+                OPsum += static_cast<int>(board[i][0] == player.other_player());
             }
             if (board[i][1] == board[i][2]) {
-                MEsum += (board[i][1] == player) ? 1 : 0;
-                OPsum += (board[i][1] == player.other_player()) ? 1 : 0;
+                MEsum += static_cast<int>(board[i][1] == player);
+                OPsum += static_cast<int>(board[i][1] == player.other_player());
             }
             if (board[0][i] == board[1][i]) {
-                MEsum += (board[0][i] == player) ? 1 : 0;
-                OPsum += (board[0][i] == player.other_player()) ? 1 : 0;
+                MEsum += static_cast<int>(board[0][i] == player);
+                OPsum += static_cast<int>(board[0][i] == player.other_player());
             }
             if (board[1][i] == board[2][i]) {
-                MEsum += (board[1][i] == player) ? 1 : 0;
-                OPsum += (board[1][i] == player.other_player()) ? 1 : 0;
+                MEsum += static_cast<int>(board[1][i] == player);
+                OPsum += static_cast<int>(board[1][i] == player.other_player());
             }
         }
         if (board[0][0] == board[1][1]) {
-            MEsum += (board[0][0] == player) ? 1 : 0;
-            OPsum += (board[0][0] == player.other_player()) ? 1 : 0;
+            MEsum += static_cast<int>(board[0][0] == player);
+            OPsum += static_cast<int>(board[0][0] == player.other_player());
         }
         if (board[1][1] == board[2][2]) {
-            MEsum += (board[1][1] == player) ? 1 : 0;
-            OPsum += (board[1][1] == player.other_player()) ? 1 : 0;
+            MEsum += static_cast<int>(board[1][1] == player);
+            OPsum += static_cast<int>(board[1][1] == player.other_player());
         }
 
         if (board[0][2] == board[1][1]) {
-            MEsum += (board[0][2] == player) ? 1 : 0;
-            OPsum += (board[0][2] == player.other_player()) ? 1 : 0;
+            MEsum += static_cast<int>(board[0][2] == player);
+            OPsum += static_cast<int>(board[0][2] == player.other_player());
         }
         if (board[1][1] == board[2][0]) {
-            MEsum += (board[1][1] == player) ? 1 : 0;
-            OPsum += (board[1][1] == player.other_player()) ? 1 : 0;
+            MEsum += static_cast<int>(board[1][1] == player);
+            OPsum += static_cast<int>(board[1][1] == player.other_player());
         }
         return color * depth * (MEsum - OPsum);
     }
