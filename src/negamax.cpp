@@ -1,14 +1,15 @@
 #include "negamax.hpp"
 #include <Timer.hpp>
 namespace NEGAMAX {
+constexpr int PENALTY{100};
 auto Negamax::simulate(const Game::GameState auto &state, const Timer::Timer &timer, int depth,
                        int alpha, int beta, int color) const & {
     {
         auto [no_moves_left, did_I_win, did_opponent_win] = state.game_over();
         if (did_I_win || did_opponent_win) {
             return std::make_pair(
-                color * (static_cast<int>(did_I_win) - static_cast<int>(did_opponent_win)) * 100 *
-                    (depth + 1),
+                color * (static_cast<int>(did_I_win) - static_cast<int>(did_opponent_win)) *
+                    PENALTY * (depth + 1),
                 Game::Move{});
         }
         if (depth == 0 || no_moves_left || !timer.is_time_remaining(time_limit)) {
