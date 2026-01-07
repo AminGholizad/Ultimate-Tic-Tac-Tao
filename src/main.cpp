@@ -1,5 +1,6 @@
 // #include "mcts.hpp"
 #include "Tic_Tac_Toe.hpp"
+#include "Tic_Tac_Toe_V2.hpp"
 #include "Ultimate_Tic_Tac_Toe.hpp"
 #include "game.hpp"
 #include "mcts.hpp"
@@ -14,6 +15,14 @@
 constexpr Timer::milliseconds_t THOUSAND{1000};
 constexpr Timer::milliseconds_t HONDRED{100};
 constexpr Timer::milliseconds_t ONE{1};
+
+void ttt2_userVSmcts(Timer::milliseconds_t time = THOUSAND) {
+    auto game = Tic_Tac_Toe_V2::State();
+    auto user = USER_MOVE::User_Move();
+    auto mcts_strategy = MCTS::Mcts<Tic_Tac_Toe_V2::State>(time);
+
+    Game::run_game(game, user, mcts_strategy);
+}
 
 void ttt_rndVSnegamax(Timer::milliseconds_t time = THOUSAND) {
     auto game = Tic_Tac_Toe::State();
@@ -32,9 +41,9 @@ void ttt_userVSnegamax(Timer::milliseconds_t time = THOUSAND) {
 void ttt_userVSmcts(Timer::milliseconds_t time = THOUSAND) {
     auto game = Tic_Tac_Toe::State();
     auto user = USER_MOVE::User_Move();
-    auto negamax_strategy = MCTS::Mcts<Tic_Tac_Toe::State>(time);
+    auto mcts_strategy = MCTS::Mcts<Tic_Tac_Toe::State>(time);
 
-    Game::run_game(game, user, negamax_strategy);
+    Game::run_game(game, user, mcts_strategy);
 }
 void ttt_rndVSmcts(Timer::milliseconds_t time = THOUSAND) {
     auto game = Tic_Tac_Toe::State();
@@ -129,6 +138,6 @@ int main(int argc, const char **argv) {
     // uttt_rndVSmcts();
     // uttt_rndVsnegamax();
     // uttt_negamaxVsnegamax();
-    uttt_userVSmcts();
+    ttt2_userVSmcts();
     return 0;
 }
