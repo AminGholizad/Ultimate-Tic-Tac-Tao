@@ -89,7 +89,7 @@ class State : public Game::State<State> {
 
   private:
     Board board{};
-    std::optional<Move> last_move{};
+    std::optional<Move> last_move{}; // NOLINT(readability-redundant-member-init)
     Player player{Player::Mark::X};
     Player winner{Player::Mark::None};
     Moves valid_moves{{0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}};
