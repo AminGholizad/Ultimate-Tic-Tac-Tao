@@ -7,25 +7,28 @@ namespace USER_MOVE {
 class User_Move : public Game::Strategy<User_Move> {
   public:
     std::optional<Game::Move> do_choose_move(Game::GameState auto &state) {
-        std::optional<Game::Move> move;
         state.debugValidMoves();
         if (state.is_first_move()) {
             std::cerr << "Enter your move (-1 -1 to start as second player):\n";
         }
-        switch (1) {
-        case 0:
-            do {
+
+        std::optional<Game::Move> move;
+        bool first = true;
+        while (true) {
+            if (!first) {
                 std::cerr << "Please enter a valid move\n";
-                [[fallthrough]];
-            case 1:
-                std::cin >> move;
-                std::cin.ignore();
-                if (!move && state.is_first_move()) {
-                    return move;
-                }
-            } while (!move || !state.is_valid_move(*move));
+            }
+            first = false;
+
+            std::cin >> move;
+            if (!move && state.is_first_move()) {
+                return move;
+            }
+            if (move && state.is_valid_move(*move)) {
+                return move;
+            }
+            std::cin.ignore();
         }
-        return move;
     }
 };
 } // namespace USER_MOVE
