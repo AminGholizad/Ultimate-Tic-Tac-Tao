@@ -113,7 +113,7 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
 
         Node *parent{};
         State state{};
-        Game::Move move{};
+        Game::Move move{}; // NOLINT(readability-redundant-member-init)
         std::vector<Node_ptr> children{};
         unsigned int visits{0};
         std::map<Player, double> wins{{Player{Player::Mark::X}, 0.}, {Player{Player::Mark::O}, 0.}};
