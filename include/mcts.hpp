@@ -16,6 +16,7 @@ template <Game::GameState State> class Mcts : public Game::Strategy<Mcts<State>>
     constexpr explicit Mcts(Timer::milliseconds_t time_limit_)
         : time_limit{time_limit_ * TIME_LIMIT_REDUCTION_FACTOR} {}
     std::optional<Game::Move> do_choose_move(State &state);
+    void status() { Tree.status(); }
 
   private:
     class Node {

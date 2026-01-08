@@ -113,6 +113,22 @@ void uttt_mctsVSnegamax(const Timer::milliseconds_t time1 = THOUSAND,
     Game::run_game(game, player1_strategy, player2_strategy);
 }
 
+void ttt_ttt2_performance() {
+    auto ttt_game = Tic_Tac_Toe::State();
+    auto mcts_ttt = MCTS::Mcts<Tic_Tac_Toe::State>(THOUSAND);
+    auto ttt2_game = Tic_Tac_Toe_V2::State();
+    auto mcts_ttt2 = MCTS::Mcts<Tic_Tac_Toe_V2::State>(THOUSAND);
+
+    for (int i = 0; i < 10; i++) {
+        [[maybe_unused]] auto unused1 = mcts_ttt.choose_move(ttt_game);
+        [[maybe_unused]] auto unused2 = mcts_ttt2.choose_move(ttt2_game);
+    }
+    std::cerr << "mcts_ttt:\n";
+    mcts_ttt.status();
+    std::cerr << "mcts_ttt2:\n";
+    mcts_ttt2.status();
+}
+
 int main(int argc, const char **argv) {
     std::vector<std::string> args(argv, argv + argc);
     /*if (args.size() == 3)
@@ -138,6 +154,7 @@ int main(int argc, const char **argv) {
     // uttt_rndVSmcts();
     // uttt_rndVsnegamax();
     // uttt_negamaxVsnegamax();
-    ttt2_userVSmcts();
+    // ttt2_userVSmcts();
+    ttt_ttt2_performance();
     return 0;
 }

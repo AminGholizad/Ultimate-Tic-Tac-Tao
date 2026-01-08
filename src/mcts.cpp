@@ -89,9 +89,7 @@ void Mcts<State>::Node::simulate(const Timer::Timer timer,
 }
 template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::find(const State &state_) {
     std::queue<Node *> que{};
-    for (const auto &child : children) {
-        que.push(child.get());
-    }
+    que.push(this);
     while (!que.empty()) {
         auto *current = que.front();
         que.pop();
