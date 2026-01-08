@@ -91,7 +91,7 @@ State::Player State::do_compute_winner(const Player &test_player) const & {
 
 State State::do_sim_move(const Move &move) const & {
     auto copy = *this;
-    copy.updateState(move);
+    copy.do_updateState(move);
     return copy;
 }
 } // namespace Ultimate_Tic_Tac_Toe
