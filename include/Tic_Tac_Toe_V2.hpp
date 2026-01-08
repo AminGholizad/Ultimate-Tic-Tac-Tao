@@ -12,12 +12,30 @@ class State : public Game::State<State> {
     using Move = Game::Move;
     using ui16 = std::uint16_t;
     using Moves = std::vector<Move>;
+
+  public:
     struct Board {
         ui16 x_board;
         ui16 o_board;
+        [[nodiscard]] friend constexpr bool operator==(const Board &lhs,
+                                                       const Board &rhs) = default;
+        friend std::ostream &operator<<(std::ostream &ostream, const Board &board_) {
+            ostream << "x:" << board_.x_board << ", o:" << board_.o_board;
+            return ostream;
+        }
     };
 
-  public:
+    constexpr State() = default;
+    constexpr explicit State(Board board_, Player player_ = Game::PlayerX)
+        : board(board_), player(player_) {
+        if (auto checked_winner = do_compute_winner(player); checked_winner.is_none()) {
+            winner = do_compute_winner(player.other_player());
+        } else {
+            winner = checked_winner;
+        }
+        init_valid_moves();
+    }
+
     [[nodiscard]] decltype(auto) do_get_board(this auto &&self) { return (self.board); }
     [[nodiscard]] decltype(auto) do_get_player(this auto &&self) { return (self.player); }
     [[nodiscard]] decltype(auto) do_get_winner(this auto &&self) { return (self.winner); }
@@ -35,9 +53,9 @@ class State : public Game::State<State> {
             std::cerr << '|';
             for (ui16 j = 0; j < 3; j++) {
                 const auto index = move2index(Move{i, j});
-                if ((x_board & index) != 0U) {
+                if ((board.x_board & index) != 0U) {
                     std::cerr << Game::PlayerX << '|';
-                } else if ((o_board & index) != 0U) {
+                } else if ((board.o_board & index) != 0U) {
                     std::cerr << Game::PlayerO << '|';
                 } else {
                     std::cerr << Game::None << '|';
@@ -159,8 +177,18 @@ class State : public Game::State<State> {
             valid_moves.erase(move_index);
         }
     }
+    void init_valid_moves() {
+        for (ui16 i = 0U; i < 3U * 3U; i++) {
+            if (((board.x_board | board.o_board) & (1U << i)) == 0U) {
+                valid_moves.push_back(index2move(i));
+            }
+        }
+    }
     [[nodiscard]] static constexpr ui16 move2index(const Move move) {
-        return static_cast<ui16>(1U << ((move.x * 3) + move.y));
+        return static_cast<ui16>(1U << ((move.x * 3U) + move.y));
+    }
+    [[nodiscard]] static constexpr Move index2move(const ui16 index) {
+        return {index / 3U, index % 3U};
     }
 };
 } // namespace Tic_Tac_Toe_V2
