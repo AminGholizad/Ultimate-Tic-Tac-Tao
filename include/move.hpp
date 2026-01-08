@@ -21,12 +21,7 @@ struct Move {
     [[nodiscard]] friend constexpr auto operator%(const Move &move, const size_t scale) {
         return std::make_pair(move.x % scale, move.y % scale);
     }
-    [[nodiscard]] friend constexpr bool operator==(const Move &lhs, const Move &rhs) {
-        return (lhs.x == rhs.x && lhs.y == rhs.y);
-    }
-    [[nodiscard]] friend constexpr bool operator!=(const Move &lhs, const Move &rhs) {
-        return (lhs.x != rhs.x || lhs.y != rhs.y);
-    }
+    [[nodiscard]] friend constexpr bool operator==(const Move &lhs, const Move &rhs) = default;
     friend std::ostream &operator<<(std::ostream &ostream, const Move &move) {
         ostream << move.x << ' ' << move.y;
         return ostream;
