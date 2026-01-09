@@ -57,6 +57,10 @@ NEGAMAX::Negamax::do_choose_move<Tic_Tac_Toe::State>(Tic_Tac_Toe::State &state) 
 template std::optional<Game::Move>
 NEGAMAX::Negamax::do_choose_move<Tic_Tac_Toe_V2::State>(Tic_Tac_Toe_V2::State &state) const &;
 
+#include "Tic_Tac_Toe_V3.hpp"
+template std::optional<Game::Move>
+NEGAMAX::Negamax::do_choose_move<Tic_Tac_Toe_V3::State>(Tic_Tac_Toe_V3::State &state) const &;
+
 #include "Ultimate_Tic_Tac_Toe.hpp"
 template std::optional<Game::Move> NEGAMAX::Negamax::do_choose_move<Ultimate_Tic_Tac_Toe::State>(
     Ultimate_Tic_Tac_Toe::State &state) const &;

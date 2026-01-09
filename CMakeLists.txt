@@ -68,6 +68,7 @@ if (Ultimate-Tic-Tac-Tao_BUILD_TESTS)
     enable_testing()
     add_executable(Ultimate-Tic-Tac-TaoTests
         tests/test_main.cpp
+        tests/test_Tic_Tac_Toe_V3.cpp
         src/Tic_Tac_Toe.cpp
         src/Ultimate_Tic_Tac_Toe.cpp
         src/negamax.cpp
