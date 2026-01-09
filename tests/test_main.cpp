@@ -1,5 +1,6 @@
 #include "Tic_Tac_Toe.hpp"
 #include "Tic_Tac_Toe_V2.hpp"
+#include "Tic_Tac_Toe_V3.hpp"
 #include "Ultimate_Tic_Tac_Toe.hpp"
 #include "game.hpp"
 #include "mcts.hpp"

@@ -1,6 +1,7 @@
 // #include "mcts.hpp"
 #include "Tic_Tac_Toe.hpp"
 #include "Tic_Tac_Toe_V2.hpp"
+#include "Tic_Tac_Toe_V3.hpp"
 #include "Ultimate_Tic_Tac_Toe.hpp"
 #include "game.hpp"
 #include "mcts.hpp"
@@ -113,20 +114,25 @@ void uttt_mctsVSnegamax(const Timer::milliseconds_t time1 = THOUSAND,
     Game::run_game(game, player1_strategy, player2_strategy);
 }
 
-void ttt_ttt2_performance() {
+void ttt_performance() {
     auto ttt_game = Tic_Tac_Toe::State();
     auto mcts_ttt = MCTS::Mcts<Tic_Tac_Toe::State>(THOUSAND);
     auto ttt2_game = Tic_Tac_Toe_V2::State();
     auto mcts_ttt2 = MCTS::Mcts<Tic_Tac_Toe_V2::State>(THOUSAND);
+    auto ttt3_game = Tic_Tac_Toe_V3::State();
+    auto mcts_ttt3 = MCTS::Mcts<Tic_Tac_Toe_V3::State>(THOUSAND);
 
     for (int i = 0; i < 10; i++) {
         [[maybe_unused]] auto unused1 = mcts_ttt.choose_move(ttt_game);
         [[maybe_unused]] auto unused2 = mcts_ttt2.choose_move(ttt2_game);
+        [[maybe_unused]] auto unused3 = mcts_ttt3.choose_move(ttt3_game);
     }
     std::cerr << "mcts_ttt:\n";
     mcts_ttt.status();
     std::cerr << "mcts_ttt2:\n";
     mcts_ttt2.status();
+    std::cerr << "mcts_ttt3:\n";
+    mcts_ttt3.status();
 }
 
 int main(int argc, const char **argv) {
@@ -155,6 +161,6 @@ int main(int argc, const char **argv) {
     // uttt_rndVsnegamax();
     // uttt_negamaxVsnegamax();
     // ttt2_userVSmcts();
-    ttt_ttt2_performance();
+    ttt_performance();
     return 0;
 }

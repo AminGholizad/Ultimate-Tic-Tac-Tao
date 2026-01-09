@@ -110,5 +110,8 @@ template class MCTS::Mcts<Tic_Tac_Toe::State>;
 #include "Tic_Tac_Toe_V2.hpp"
 template class MCTS::Mcts<Tic_Tac_Toe_V2::State>;
 
+#include "Tic_Tac_Toe_V3.hpp"
+template class MCTS::Mcts<Tic_Tac_Toe_V3::State>;
+
 #include "Ultimate_Tic_Tac_Toe.hpp"
 template class MCTS::Mcts<Ultimate_Tic_Tac_Toe::State>;
