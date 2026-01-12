@@ -4,21 +4,22 @@
 #include <iostream>
 namespace Game {
 struct Move {
-    size_t x{0};
-    size_t y{0};
+    using ui32 = std::uint32_t;
+    ui32 x{0};
+    ui32 y{0};
 
     constexpr Move() = default;
-    constexpr Move(size_t x_in, size_t y_in) : x{x_in}, y{y_in} {}
+    constexpr Move(ui32 x_in, ui32 y_in) : x{x_in}, y{y_in} {}
 
     // friends
     // refer to https://youtu.be/T08YxaCG_OY?si=YROuX5ikK8vKA0Mh
-    [[nodiscard]] friend constexpr auto operator*(const Move &move, const size_t scale) {
+    [[nodiscard]] friend constexpr auto operator*(const Move &move, const ui32 scale) {
         return std::make_pair(move.x * scale, move.y * scale);
     }
-    [[nodiscard]] friend constexpr auto operator/(const Move &move, const size_t scale) {
+    [[nodiscard]] friend constexpr auto operator/(const Move &move, const ui32 scale) {
         return std::make_pair(move.x / scale, move.y / scale);
     }
-    [[nodiscard]] friend constexpr auto operator%(const Move &move, const size_t scale) {
+    [[nodiscard]] friend constexpr auto operator%(const Move &move, const ui32 scale) {
         return std::make_pair(move.x % scale, move.y % scale);
     }
     [[nodiscard]] friend constexpr bool operator==(const Move &lhs, const Move &rhs) = default;
@@ -33,7 +34,7 @@ struct Move {
         if (x_in < 0 || y_in < 0) {
             move = {};
         } else {
-            move = {static_cast<size_t>(x_in), static_cast<size_t>(y_in)};
+            move = {static_cast<ui32>(x_in), static_cast<ui32>(y_in)};
         }
         return istream;
     }
