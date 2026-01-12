@@ -16,7 +16,7 @@ class State : public Game::State<State> {
   public:
     [[nodiscard]] decltype(auto) do_get_board(this auto &&self) { return (self.flags); }
     [[nodiscard]] constexpr decltype(auto) do_get_player(this auto &&self) {
-        if ((self.flags & xTurn) == 1) {
+        if ((self.flags & xTurn) == xTurn) {
             return (Game::PlayerX);
         }
         return (Game::PlayerO);
