@@ -60,7 +60,7 @@ void State::do_updateState(const Move &move) {
     board[move.x][move.y] = player;
     last_move = move;
     winner = do_compute_winner(player);
-    player = player.other_player();
+    do_change_player();
     set_valid_moves();
 }
 State State::do_sim_move(const Move &move) const & {

@@ -28,7 +28,7 @@ template <Game::GameState State> Mcts<State>::Node *Mcts<State>::Node::best_chil
         ->get();
 }
 template <Game::GameState State> void Mcts<State>::Node::status() const & {
-    const auto player = state.get_player().other_player(); // last played player
+    const auto player = state.get_player();
     std::cerr << move << "(#visits " << visits << " ,{";
     std::cerr << player << ':' << wins.at(player) << ", " << player.other_player() << ':'
               << wins.at(player.other_player())

@@ -61,6 +61,8 @@ template <typename GAME> class State {
     }
     void updateState(this auto &&self, const Move &move) { self.do_updateState(move); }
 
+    constexpr void change_player(this auto &&self) { self.do_change_player(); }
+
   private:
     [[nodiscard]] Player compute_winner(this const auto &self, const Player &test_player) {
         return self.do_compute_winner(test_player);
@@ -81,7 +83,7 @@ concept GameStrategy = std::derived_from<T, Strategy<T>>;
 
 void moveTo(GameState auto &state, const std::optional<Game::Move> &move) {
     if (!move) {
-        state.get_player() = state.get_player().other_player();
+        state.change_player();
         return;
     }
     state.updateState(*move);
