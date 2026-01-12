@@ -1,7 +1,5 @@
 #include "Tic_Tac_Toe_V3.hpp"
 #include "game.hpp"
-#include "mcts.hpp"
-#include "negamax.hpp"
 #include "player.hpp"
 #include <catch2/catch_test_macros.hpp>
 
