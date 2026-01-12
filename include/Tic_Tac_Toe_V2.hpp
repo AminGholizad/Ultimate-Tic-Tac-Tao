@@ -121,9 +121,10 @@ class State : public Game::State<State> {
         }
         last_move = move;
         winner = do_compute_winner(player);
-        player = player.other_player();
+        do_change_player();
         set_valid_moves(move);
     }
+    constexpr void do_change_player() { player = player.other_player(); }
 
   private:
     Board board{.x_board = 0, .o_board = 0};

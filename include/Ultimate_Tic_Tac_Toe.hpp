@@ -110,7 +110,7 @@ class State : public Game::State<State> {
             fill_sub(sub_x, sub_y, Player(Player::Mark::Draw));
             winner = do_compute_winner(player);
         }
-        player = player.other_player();
+        do_change_player();
         set_valid_moves();
     }
 
@@ -118,6 +118,7 @@ class State : public Game::State<State> {
         auto [MEsum, OPsum] = sub_win_count();
         return color * (MEsum - 2 * OPsum) * (depth + 1);
     }
+    constexpr void do_change_player() { player = player.other_player(); }
 
   private:
     Board9x9 board{};
