@@ -17,7 +17,7 @@ constexpr Timer::milliseconds_t THOUSAND{1000};
 constexpr Timer::milliseconds_t HONDRED{100};
 constexpr Timer::milliseconds_t ONE{1};
 
-void ttt2_userVSmcts(Timer::milliseconds_t time = THOUSAND) {
+void ttt2_userVSmcts(const Timer::milliseconds_t time = THOUSAND) {
     auto game = Tic_Tac_Toe_V2::State();
     auto user = USER_MOVE::User_Move();
     auto mcts_strategy = MCTS::Mcts<Tic_Tac_Toe_V2::State>(time);
@@ -25,28 +25,28 @@ void ttt2_userVSmcts(Timer::milliseconds_t time = THOUSAND) {
     Game::run_game(game, user, mcts_strategy);
 }
 
-void ttt_rndVSnegamax(Timer::milliseconds_t time = THOUSAND) {
+void ttt_rndVSnegamax(const Timer::milliseconds_t time = THOUSAND) {
     auto game = Tic_Tac_Toe::State();
     auto negamax_strategy = NEGAMAX::Negamax(time);
     auto random_strategy = RANDOM_MOVE::Random_Move();
 
     Game::run_game(game, negamax_strategy, random_strategy);
 }
-void ttt_userVSnegamax(Timer::milliseconds_t time = THOUSAND) {
+void ttt_userVSnegamax(const Timer::milliseconds_t time = THOUSAND) {
     auto game = Tic_Tac_Toe::State();
     auto user = USER_MOVE::User_Move();
     auto negamax_strategy = NEGAMAX::Negamax(time);
 
     Game::run_game(game, user, negamax_strategy);
 }
-void ttt_userVSmcts(Timer::milliseconds_t time = THOUSAND) {
+void ttt_userVSmcts(const Timer::milliseconds_t time = THOUSAND) {
     auto game = Tic_Tac_Toe::State();
     auto user = USER_MOVE::User_Move();
     auto mcts_strategy = MCTS::Mcts<Tic_Tac_Toe::State>(time);
 
     Game::run_game(game, user, mcts_strategy);
 }
-void ttt_rndVSmcts(Timer::milliseconds_t time = THOUSAND) {
+void ttt_rndVSmcts(const Timer::milliseconds_t time = THOUSAND) {
     auto game = Tic_Tac_Toe::State();
     auto mcts_strategy = MCTS::Mcts<Tic_Tac_Toe::State>(time);
     auto random_strategy = RANDOM_MOVE::Random_Move();
@@ -62,14 +62,14 @@ void ttt_negamaxVSnegamax(const Timer::milliseconds_t time1 = THOUSAND,
     Game::run_game(game, player1_strategy, player2_strategy);
 }
 
-void uttt_rndVSmcts(Timer::milliseconds_t time = THOUSAND) {
+void uttt_rndVSmcts(const Timer::milliseconds_t time = THOUSAND) {
     auto game = Ultimate_Tic_Tac_Toe::State();
     auto mcts_strategy = MCTS::Mcts<Ultimate_Tic_Tac_Toe::State>(time);
     auto random_strategy = RANDOM_MOVE::Random_Move();
 
     Game::run_game(game, mcts_strategy, random_strategy);
 }
-void uttt_rndVsnegamax(Timer::milliseconds_t time = THOUSAND) {
+void uttt_rndVsnegamax(const Timer::milliseconds_t time = THOUSAND) {
     auto game = Ultimate_Tic_Tac_Toe::State();
     auto negamax_strategy = NEGAMAX::Negamax(time);
     auto random_strategy = RANDOM_MOVE::Random_Move();
