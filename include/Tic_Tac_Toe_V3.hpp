@@ -33,7 +33,7 @@ class State : public Game::State<State> {
         }
         return (Game::None);
     }
-    [[nodiscard]] decltype(auto) do_get_moves(this auto &&self) { return (self.valid_moves); }
+    [[nodiscard]] decltype(auto) do_get_moves(this auto &&self) { return (self.get_valid_moves()); }
 
     constexpr State() = default;
     constexpr State(ui32 flags_, Move last_move_) : flags(flags_) {
@@ -46,7 +46,6 @@ class State : public Game::State<State> {
         }
         set_winner(winner);
         set_last_move(last_move_);
-        init_valid_moves();
     }
 
     [[nodiscard]] constexpr bool do_is_over() const & {
@@ -79,7 +78,7 @@ class State : public Game::State<State> {
     }
     void do_debugValidMoves() const & {
         std::cerr << "Your valid moves are:\n";
-        for (const auto &move : valid_moves) {
+        for (const auto &move : get_valid_moves()) {
             std::cerr << '(' << move << ")\n";
         }
         std::cerr << '\n';
@@ -142,7 +141,6 @@ class State : public Game::State<State> {
         const auto winner = do_compute_winner(player);
         set_winner(winner);
         do_change_player();
-        set_valid_moves(move);
     }
     constexpr void do_change_player() { flags ^= xTurn; }
 
@@ -200,21 +198,7 @@ class State : public Game::State<State> {
     ui32 flags{xTurn};
     // last_move,xTurn,Draw,Owon,Xwon,Opositions(9),Xpositions(9)
     // 30  -  22,21   ,  20,  19,  18,     17  -  9,      8  -  0
-    Moves valid_moves{{0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}};
 
-    void set_valid_moves(const Move &move) {
-        const auto move_index = std::ranges::find(valid_moves, move);
-        if (move_index != valid_moves.end()) {
-            valid_moves.erase(move_index);
-        }
-    }
-    void init_valid_moves() {
-        for (ui32 i = 0U; i < 3U * 3U; i++) {
-            if (((flags | oFlags()) & (1U << i)) == 0U) {
-                valid_moves.push_back(num2move(i));
-            }
-        }
-    }
     void set_winner(const Player winner) {
         if (winner == Game::PlayerX) {
             flags |= xWon;
@@ -223,6 +207,16 @@ class State : public Game::State<State> {
         } else if (winner == Game::Draw) {
             flags |= Draw;
         }
+    }
+
+    [[nodiscard]] constexpr Moves get_valid_moves() const & {
+        Moves valid_moves{};
+        for (ui32 i = 0U; i < 3U * 3U; i++) {
+            if (((flags | oFlags()) & (1U << i)) == 0U) {
+                valid_moves.push_back(num2move(i));
+            }
+        }
+        return valid_moves;
     }
     [[nodiscard]] static constexpr ui32 move2num(const Move move) {
         return static_cast<ui32>((move.x * 3U) + move.y);
