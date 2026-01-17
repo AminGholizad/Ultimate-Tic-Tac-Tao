@@ -39,11 +39,6 @@ template <typename GAME> class State {
         auto valid_moves = self.do_get_moves();
         return std::ranges::find(valid_moves, *move) != valid_moves.end();
     }
-    constexpr void bring_to_first(this auto &self, Move const &move) {
-        auto &moves = self.get_moves();
-        auto iter = std::ranges::find(moves, move);
-        std::rotate(moves.begin(), iter, iter + 1);
-    }
 
     void debugBoard(this const auto &self) { self.do_debugBoard(); }
     void debugValidMoves(this const auto &self) { self.do_debugValidMoves(); }

@@ -41,7 +41,6 @@ std::optional<Game::Move> Negamax::do_choose_move(Game::GameState auto &state) c
     int depth = 1;
     while (timer.is_time_remaining(time_limit)) {
         auto [unused, move] = simulate(state, timer, depth);
-        state.bring_to_first(move);
         best_move = move;
         depth++;
     }
