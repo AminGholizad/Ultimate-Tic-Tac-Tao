@@ -83,6 +83,7 @@ concept GameStrategy = std::derived_from<T, Strategy<T>>;
 
 void moveTo(GameState auto &state, const std::optional<Game::Move> &move) {
     if (!move) {
+        std::cerr << "other player will go first...\n";
         state.change_player();
         return;
     }
