@@ -121,18 +121,18 @@ void ttt_performance() {
     auto mcts_ttt2 = MCTS::Mcts<Tic_Tac_Toe_V2::State>(THOUSAND);
     auto ttt3_game = Tic_Tac_Toe_V3::State();
     auto mcts_ttt3 = MCTS::Mcts<Tic_Tac_Toe_V3::State>(THOUSAND);
-
+    std::cerr << sizeof(ttt_game) << ", " << sizeof(ttt2_game) << ", " << sizeof(ttt3_game) << "\n";
     for (int i = 0; i < 10; i++) {
         [[maybe_unused]] auto unused1 = mcts_ttt.choose_move(ttt_game);
         [[maybe_unused]] auto unused2 = mcts_ttt2.choose_move(ttt2_game);
         [[maybe_unused]] auto unused3 = mcts_ttt3.choose_move(ttt3_game);
+        std::cerr << "mcts_ttt:\n";
+        mcts_ttt.status();
+        std::cerr << "mcts_ttt2:\n";
+        mcts_ttt2.status();
+        std::cerr << "mcts_ttt3:\n";
+        mcts_ttt3.status();
     }
-    std::cerr << "mcts_ttt:\n";
-    mcts_ttt.status();
-    std::cerr << "mcts_ttt2:\n";
-    mcts_ttt2.status();
-    std::cerr << "mcts_ttt3:\n";
-    mcts_ttt3.status();
 }
 
 int main(int argc, const char **argv) {
