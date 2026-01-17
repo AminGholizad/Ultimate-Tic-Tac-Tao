@@ -36,7 +36,7 @@ class State : public Game::State<State> {
     [[nodiscard]] decltype(auto) do_get_moves(this auto &&self) { return (self.valid_moves); }
 
     constexpr State() = default;
-    constexpr explicit State(ui32 flags_) : flags(flags_) {
+    constexpr State(ui32 flags_, Move last_move_) : flags(flags_) {
         const Player player = do_get_player();
         Player winner;
         if (auto checked_winner = do_compute_winner(player); checked_winner.is_none()) {
@@ -45,15 +45,17 @@ class State : public Game::State<State> {
             winner = checked_winner;
         }
         set_winner(winner);
+        set_last_move(last_move_);
         init_valid_moves();
     }
 
     [[nodiscard]] constexpr bool do_is_over() const & {
         return ((flags & (xWon | oWon | Draw)) != 0);
     }
-    [[nodiscard]] constexpr bool do_is_first_move() const & { return !last_move; }
+    [[nodiscard]] constexpr bool do_is_first_move() const & { return !get_last_move(); }
     [[nodiscard]] constexpr bool do_is_draw() const & { return ((flags & Draw) == Draw); }
     void do_debugBoard() const & {
+        auto last_move = get_last_move();
         if (last_move) {
             std::cerr << do_get_player().other_player() << " moved to (" << *last_move << ")\n";
         }
@@ -65,7 +67,7 @@ class State : public Game::State<State> {
                 const auto index = move2index(Move{i, j});
                 if ((flags & index) != 0U) {
                     std::cerr << Game::PlayerX << '|';
-                } else if ((flags & (index << 9U)) != 0U) {
+                } else if ((flags & (index << O_pos_start)) != 0U) {
                     std::cerr << Game::PlayerO << '|';
                 } else {
                     std::cerr << Game::None << '|';
@@ -130,9 +132,9 @@ class State : public Game::State<State> {
         if ((flags & xTurn) == xTurn) {
             flags |= index;
         } else {
-            flags |= (index << 9U);
+            flags |= (index << O_pos_start);
         }
-        last_move = move;
+        set_last_move(move);
         Player player{Game::PlayerO};
         if ((flags & xTurn) == xTurn) {
             player = Game::PlayerX;
@@ -188,11 +190,16 @@ class State : public Game::State<State> {
     // 20 :000010100
     constexpr static ui32 full_board = 511;
     // 511:111111111
+    //
+    constexpr static ui32 last_move_start = 22;
+    constexpr static ui32 O_pos_start = 9;
+    constexpr static ui32 reset_last_move_flags = 4194303;
+    // 4194303:00000000001111111111111111111111
+
   private:
     ui32 flags{xTurn};
-    // xTurn,Draw,Owon,Xwon,Opositions(9),Xpositions(9)
-    // 21   ,  20,  19,  18,     17  -  9,      8  -  0
-    std::optional<Move> last_move{std::nullopt};
+    // last_move,xTurn,Draw,Owon,Xwon,Opositions(9),Xpositions(9)
+    // 30  -  22,21   ,  20,  19,  18,     17  -  9,      8  -  0
     Moves valid_moves{{0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2}};
 
     void set_valid_moves(const Move &move) {
@@ -204,7 +211,7 @@ class State : public Game::State<State> {
     void init_valid_moves() {
         for (ui32 i = 0U; i < 3U * 3U; i++) {
             if (((flags | oFlags()) & (1U << i)) == 0U) {
-                valid_moves.push_back(index2move(i));
+                valid_moves.push_back(num2move(i));
             }
         }
     }
@@ -217,13 +224,27 @@ class State : public Game::State<State> {
             flags |= Draw;
         }
     }
-    [[nodiscard]] static constexpr ui32 move2index(const Move move) {
-        return static_cast<ui32>(1U << ((move.x * 3U) + move.y));
+    [[nodiscard]] static constexpr ui32 move2num(const Move move) {
+        return static_cast<ui32>((move.x * 3U) + move.y);
     }
-    [[nodiscard]] static constexpr Move index2move(const ui32 index) {
+    [[nodiscard]] static constexpr ui32 move2index(const Move move) {
+        return static_cast<ui32>(1U << move2num(move));
+    }
+    [[nodiscard]] static constexpr Move num2move(const ui32 index) {
         return {index / 3U, index % 3U};
     }
-    [[nodiscard]] constexpr ui32 oFlags() const & { return (flags >> 9U); }
+    [[nodiscard]] constexpr ui32 oFlags() const & { return (flags >> O_pos_start); }
+    constexpr void set_last_move(const Move &move) {
+        flags &= reset_last_move_flags;
+        flags |= (move2num(move) + 1) << last_move_start;
+    }
+    [[nodiscard]] constexpr std::optional<Move> get_last_move() const & {
+        auto index = flags >> last_move_start;
+        if (index < 1) {
+            return std::nullopt;
+        }
+        return num2move(index - 1);
+    }
 };
 } // namespace Tic_Tac_Toe_V3
 #endif // !TTT3_HPP
